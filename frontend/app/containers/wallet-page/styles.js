@@ -5,7 +5,7 @@ const styles = theme => ({
     flexDirection: 'column',
     alignItems: 'center',
     padding: 30,
-    // width: '70%',
+    width: '50%',
   },
   keyView: {},
 
@@ -52,7 +52,12 @@ const styles = theme => ({
 
   '@media (max-width: 600px)': {
     root: {
-      width: '95%',
+      width: '95% !important',
+    },
+  },
+  '@media (max-width: 1000px)': {
+    root: {
+      width: '80%',
     },
   },
 });

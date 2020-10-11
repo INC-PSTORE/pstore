@@ -5,6 +5,7 @@ const styles = theme => ({
     flexDirection: 'column',
     alignItems: 'center',
     padding: 30,
+    width: '50%',
   },
   snackBar: {
     marginTop: "3%",
@@ -15,6 +16,16 @@ const styles = theme => ({
   },
   stepper: {
     backgroundColor: 'transparent',
+  },
+  '@media (max-width: 600px)': {
+    root: {
+      width: '95% !important',
+    },
+  },
+  '@media (max-width: 1000px)': {
+    root: {
+      width: '80%',
+    },
   },
 });
 

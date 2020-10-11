@@ -1,7 +1,7 @@
 
 const styles = theme => ({
   root: {
-    width: '75%',
+    width: '100%',
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
@@ -21,9 +21,6 @@ const styles = theme => ({
     textAlign: 'center',
   },
   '@media (max-width: 600px)': {
-    root: {
-      width: '100%',
-    },
     tableCell: {
       padding: "2px",
     },

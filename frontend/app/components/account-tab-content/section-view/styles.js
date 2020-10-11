@@ -3,7 +3,7 @@ import { blue, grey } from "@material-ui/core/colors";
 export default {
     container: {
         borderRadius: '5px 5px 0px 0px',
-        overflow: 'hidden',
+        overflow: 'auto',
         marginBottom: 40,
         width: '100%',
     },
@@ -16,6 +16,7 @@ export default {
         background: grey['100']
     },
     content: {
+        overflow: 'auto',
         padding: '10px 15px',
     }
 };

@@ -6,6 +6,10 @@ const styles = {
     position: 'absolute',
     height: '100%',
     width: '100%',
+    display: 'flex',
+    flexWrap: 'wrap',
+    flexDirection: 'column',
+    alignItems: 'center',
   },
   appBar: {
     backgroundColor: PRIMARY_COLOR,

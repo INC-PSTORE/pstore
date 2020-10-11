@@ -4,7 +4,8 @@ const styles = theme => ({
     flexWrap: 'wrap',
     flexDirection: 'column',
     alignItems: 'center',
-    padding: 30,
+    // padding: 30,
+    width: '40%',
   },
   stepper: {
     backgroundColor: 'transparent',
@@ -15,6 +16,16 @@ const styles = theme => ({
   snackBarContent: {
     backgroundColor: "#f44336",
     color: "white",
+  },
+  '@media (max-width: 600px)': {
+    root: {
+      width: '95% !important',
+    },
+  },
+  '@media (max-width: 1000px)': {
+    root: {
+      width: '80%',
+    },
   },
 });
 

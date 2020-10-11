@@ -2,16 +2,11 @@ import green from '@material-ui/core/colors/green';
 
 const styles = theme => ({
   root: {
-    width: '65%',
+    width: '100%',
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
     padding: 10,
-  },
-  '@media (max-width: 600px)': {
-    root: {
-      width: '90%',
-    }
   },
   form: {
     width: '100%',
