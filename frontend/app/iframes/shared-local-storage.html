@@ -1,0 +1,59 @@
+<!doctype html>
+
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <link type="text/css" rel="stylesheet" id="dark-mode-general-link">
+  <link type="text/css" rel="stylesheet" id="dark-mode-custom-link">
+  <style type="text/css" id="dark-mode-custom-style"></style>
+  <title>postMessage Demo: Receiver</title>
+</head>
+
+<body>
+  <script>
+    window.onload = function() {
+
+      var domains = [
+        "https://psafe.app",
+        "https://ptrade.app"
+      ];
+
+      // A function to process messages received by the window.
+      function receiveMessage(e) {
+        if (!domains.includes(e.origin)) {
+          return;
+        }
+
+        try {
+          var payload = JSON.parse(e.data);
+          switch (payload.method) {
+            case 'set':
+              window.localStorage.setItem(payload.key, payload.data);
+              break;
+            case 'get':
+              var parent = window.parent;
+              var value = window.localStorage.getItem(payload.key);
+              var msg = JSON.stringify({ method: 'onReturnData', key: payload.key, value });
+              parent.postMessage(msg, "*");
+              break;
+            case 'remove':
+              window.localStorage.removeItem(payload.key);
+              break;
+          }
+        } catch (error) {
+          console.log(`WARN: ${error}`);
+        }
+      }
+
+      // Setup an event listener that calls receiveMessage() when the window
+      // receives a new MessageEvent.
+      window.addEventListener('message', receiveMessage);
+      var parent = window.parent;
+      var msg = JSON.stringify({ method: 'onReady' });
+      parent.postMessage(msg, "*");
+    }
+  </script>
+</body>
+
+</html>

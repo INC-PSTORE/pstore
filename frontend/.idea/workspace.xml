@@ -1,0 +1,346 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="BranchesTreeState">
+    <expand>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="LOCAL_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="GROUP_NODE:origin" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+    </expand>
+    <select />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="f63d136a-7d0d-4fea-9670-898568ac5b64" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/../backend/workers/interval/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/../backend/workers/interval/go.sum" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/server/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/middlewares/addProdMiddlewares.js" beforeDir="false" afterPath="$PROJECT_DIR$/server/middlewares/addProdMiddlewares.js" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="ProjectId" id="1eoDlmlOjIFBbhSkhOWLYI3zWHS" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="TERMINAL_CUSTOM_COMMANDS_GOT_IT" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="node.js.detected.package.eslint" value="true" />
+    <property name="node.js.detected.package.tslint" value="true" />
+    <property name="node.js.path.for.package.eslint" value="project" />
+    <property name="node.js.path.for.package.tslint" value="project" />
+    <property name="node.js.selected.package.eslint" value="(autodetect)" />
+    <property name="node.js.selected.package.tslint" value="(autodetect)" />
+    <property name="nodejs_package_manager_path" value="npm" />
+    <property name="prettierjs.PrettierConfiguration.Package" value="$PROJECT_DIR$/node_modules/prettier" />
+    <property name="settings.editor.selected.configurable" value="preferences.lookFeel" />
+    <property name="ts.external.directory.path" value="$APPLICATION_HOME_DIR$/plugins/JavaScriptLanguage/jsLanguageServicesImpl/external" />
+    <property name="vue.rearranger.settings.migration" value="true" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/app/components" />
+      <recent name="$PROJECT_DIR$/app/containers/deploy-page" />
+      <recent name="$PROJECT_DIR$/app/components/snackbar" />
+      <recent name="$PROJECT_DIR$/app/containers/unshielding-page" />
+    </key>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="f63d136a-7d0d-4fea-9670-898568ac5b64" name="Default Changelist" comment="" />
+      <created>1594979205123</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1594979205123</updated>
+      <workItem from="1594979206293" duration="796000" />
+      <workItem from="1595039855775" duration="1448000" />
+      <workItem from="1595132321019" duration="96930000" />
+      <workItem from="1595821138238" duration="2706000" />
+      <workItem from="1595835778220" duration="63492000" />
+      <workItem from="1596429034392" duration="13716000" />
+      <workItem from="1596456490876" duration="1220000" />
+      <workItem from="1596523424204" duration="965000" />
+      <workItem from="1596524719827" duration="16856000" />
+      <workItem from="1596852240058" duration="6914000" />
+      <workItem from="1597220930798" duration="1969000" />
+      <workItem from="1597478922409" duration="1502000" />
+      <workItem from="1597551183992" duration="1166000" />
+      <workItem from="1597592527197" duration="811000" />
+      <workItem from="1597725356216" duration="992000" />
+      <workItem from="1597728540626" duration="1203000" />
+      <workItem from="1597912689283" duration="2573000" />
+      <workItem from="1597923078893" duration="11925000" />
+      <workItem from="1598146759980" duration="485000" />
+      <workItem from="1598151028969" duration="800000" />
+      <workItem from="1598521409162" duration="242000" />
+      <workItem from="1598583950089" duration="55581000" />
+      <workItem from="1599102361811" duration="833000" />
+      <workItem from="1599277906913" duration="26169000" />
+      <workItem from="1600343201046" duration="732000" />
+      <workItem from="1600349476898" duration="2561000" />
+      <workItem from="1600498238195" duration="1173000" />
+      <workItem from="1600763809368" duration="33086000" />
+      <workItem from="1602308579873" duration="7724000" />
+    </task>
+    <task id="LOCAL-00001" summary="unshield: integrate api backend into frontend.">
+      <created>1595330379796</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1595330379796</updated>
+    </task>
+    <task id="LOCAL-00002" summary="unshield: added middleware.">
+      <created>1595335614781</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1595335614781</updated>
+    </task>
+    <task id="LOCAL-00003" summary="unshield: fixed import function">
+      <created>1595337180287</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1595337180288</updated>
+    </task>
+    <task id="LOCAL-00004" summary="unshield: fixed typo and added status label in unshield.">
+      <created>1595384818999</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1595384818999</updated>
+    </task>
+    <task id="LOCAL-00005" summary="unshield: fixed pointed to wrong field.">
+      <created>1595412756857</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1595412756858</updated>
+    </task>
+    <task id="LOCAL-00006" summary="unshield: added loading screen to unshield and integrate with backend successfully">
+      <created>1595433996405</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1595433996405</updated>
+    </task>
+    <task id="LOCAL-00007" summary="unshield: fixed typo.">
+      <created>1595494439168</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1595494439168</updated>
+    </task>
+    <task id="LOCAL-00008" summary="unshield: updated constant value on client site.">
+      <created>1595495126818</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1595495126818</updated>
+    </task>
+    <task id="LOCAL-00009" summary="unshield: added check eth wallet balance to pay burn fee and get balance ERC20 token.">
+      <created>1595510055825</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1595510055826</updated>
+    </task>
+    <task id="LOCAL-00010" summary="unshield: fixed stepper and state in reducer">
+      <created>1595515726591</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1595515726593</updated>
+    </task>
+    <task id="LOCAL-00011" summary="unshield: added validation and snackbar for some specific errors">
+      <created>1595936611058</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1595936611058</updated>
+    </task>
+    <task id="LOCAL-00012" summary="unshield: update show check balances button">
+      <created>1595987101194</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1595987101194</updated>
+    </task>
+    <task id="LOCAL-00013" summary="added styles to responsive for mobile.">
+      <created>1596012134662</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1596012134662</updated>
+    </task>
+    <task id="LOCAL-00014" summary="restyle forminfo for mobile view">
+      <created>1596043125026</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1596043125026</updated>
+    </task>
+    <task id="LOCAL-00015" summary="restyle forminfo for os devices view (safari)">
+      <created>1596085971545</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1596085971545</updated>
+    </task>
+    <task id="LOCAL-00016" summary="Front-end: added deploy page. Some TODOs will be done on tomorrow.">
+      <created>1596442888545</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1596442888545</updated>
+    </task>
+    <task id="LOCAL-00017" summary="Frontend: converted from incKey to ethKey success.">
+      <created>1596537960472</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1596537960472</updated>
+    </task>
+    <task id="LOCAL-00018" summary="frontend: added auto update to unshield, deploy and remove some console logs.">
+      <created>1597934551728</created>
+      <option name="number" value="00018" />
+      <option name="presentableId" value="LOCAL-00018" />
+      <option name="project" value="LOCAL" />
+      <updated>1597934551728</updated>
+    </task>
+    <task id="LOCAL-00019" summary="updated for MetaMask supporting">
+      <created>1598697851765</created>
+      <option name="number" value="00019" />
+      <option name="presentableId" value="LOCAL-00019" />
+      <option name="project" value="LOCAL" />
+      <updated>1598697851765</updated>
+    </task>
+    <task id="LOCAL-00020" summary="updated for MetaMask supporting check network id and display properly mess.">
+      <created>1598875833734</created>
+      <option name="number" value="00020" />
+      <option name="presentableId" value="LOCAL-00020" />
+      <option name="project" value="LOCAL" />
+      <updated>1598875833734</updated>
+    </task>
+    <option name="localTasksCounter" value="21" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+    <option name="oldMeFiltersMigrated" value="true" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="unshield: integrate api backend into frontend." />
+    <MESSAGE value="unshield: added middleware." />
+    <MESSAGE value="unshield: fixed import function" />
+    <MESSAGE value="unshield: fixed typo and added status label in unshield." />
+    <MESSAGE value="unshield: fixed pointed to wrong field." />
+    <MESSAGE value="unshield: added loading screen to unshield and integrate with backend successfully" />
+    <MESSAGE value="unshield: fixed typo." />
+    <MESSAGE value="unshield: updated constant value on client site." />
+    <MESSAGE value="unshield: added check eth wallet balance to pay burn fee and get balance ERC20 token." />
+    <MESSAGE value="unshield: fixed stepper and state in reducer" />
+    <MESSAGE value="unshield: added validation and snackbar for some specific errors" />
+    <MESSAGE value="unshield: update show check balances button" />
+    <MESSAGE value="added styles to responsive for mobile." />
+    <MESSAGE value="restyle forminfo for mobile view" />
+    <MESSAGE value="restyle forminfo for os devices view (safari)" />
+    <MESSAGE value="Front-end: added deploy page. Some TODOs will be done on tomorrow." />
+    <MESSAGE value="Frontend: converted from incKey to ethKey success." />
+    <MESSAGE value="frontend: added auto update to unshield, deploy and remove some console logs." />
+    <MESSAGE value="updated for MetaMask supporting" />
+    <MESSAGE value="updated for MetaMask supporting check network id and display properly mess." />
+    <option name="LAST_COMMIT_MESSAGE" value="updated for MetaMask supporting check network id and display properly mess." />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="424" y="262" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1596085410550">
+      <screen x="0" y="0" width="1920" height="1200" />
+    </state>
+    <state x="424" y="262" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1920.1200@0.0.1920.1200" timestamp="1596085410550" />
+    <state x="100" y="123" width="1720" height="977" key="DiffContextDialog" timestamp="1602386721589">
+      <screen x="0" y="23" width="1920" height="1177" />
+    </state>
+    <state x="100" y="123" width="1720" height="977" key="DiffContextDialog/0.23.1920.1177@0.23.1920.1177" timestamp="1602386721589" />
+    <state x="0" y="0" key="FileDocumentManager.FileCacheConflict" timestamp="1595413345174">
+      <screen x="0" y="0" width="1920" height="1200" />
+    </state>
+    <state x="0" y="0" key="FileDocumentManager.FileCacheConflict/0.0.1920.1200@0.0.1920.1200" timestamp="1595413345174" />
+    <state x="729" y="309" key="RollbackChangesDialog" timestamp="1602390319894">
+      <screen x="0" y="0" width="1920" height="1200" />
+    </state>
+    <state x="729" y="309" key="RollbackChangesDialog/0.0.1920.1200@0.0.1920.1200" timestamp="1602390319894" />
+    <state x="729" y="326" key="RollbackChangesDialog/0.23.1920.1177@0.23.1920.1177" timestamp="1596538162687" />
+    <state x="469" y="239" key="SettingsEditor" timestamp="1595930848328">
+      <screen x="0" y="0" width="1920" height="1200" />
+    </state>
+    <state x="469" y="239" key="SettingsEditor/0.0.1920.1200@0.0.1920.1200" timestamp="1595930848328" />
+    <state x="564" y="232" key="com.intellij.openapi.editor.actions.MultiplePasteAction$ClipboardContentChooser" timestamp="1595385110350">
+      <screen x="0" y="0" width="1920" height="1200" />
+    </state>
+    <state x="564" y="232" key="com.intellij.openapi.editor.actions.MultiplePasteAction$ClipboardContentChooser/0.0.1920.1200@0.0.1920.1200" timestamp="1595385110350" />
+    <state x="751" y="521" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2" timestamp="1595269168189">
+      <screen x="0" y="0" width="1920" height="1200" />
+    </state>
+    <state x="751" y="521" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2/0.0.1920.1200@0.0.1920.1200" timestamp="1595269168189" />
+    <state x="661" y="355" width="598" height="518" key="find.popup" timestamp="1602388919487">
+      <screen x="0" y="0" width="1920" height="1200" />
+    </state>
+    <state x="661" y="355" width="598" height="518" key="find.popup/0.0.1920.1200@0.0.1920.1200" timestamp="1602388919487" />
+    <state x="661" y="371" width="598" height="509" key="find.popup/0.23.1920.1177@0.23.1920.1177" timestamp="1602323199820" />
+    <state x="625" y="285" width="670" height="675" key="run.anything.popup" timestamp="1600498244612">
+      <screen x="0" y="0" width="1920" height="1200" />
+    </state>
+    <state x="625" y="285" width="670" height="675" key="run.anything.popup/0.0.1920.1200@0.0.1920.1200" timestamp="1600498244612" />
+    <state x="625" y="303" width="670" height="663" key="run.anything.popup/0.23.1920.1177@0.23.1920.1177" timestamp="1597223761947" />
+    <state x="625" y="271" width="670" height="676" key="search.everywhere.popup" timestamp="1602388305079">
+      <screen x="0" y="0" width="1920" height="1200" />
+    </state>
+    <state x="625" y="271" width="670" height="676" key="search.everywhere.popup/0.0.1920.1200@0.0.1920.1200" timestamp="1602388305079" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/app/containers/accounts/reducer.js</url>
+          <line>40</line>
+          <option name="timeStamp" value="8" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
+</project>
