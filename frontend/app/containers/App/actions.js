@@ -17,6 +17,7 @@ import {
   COUNT_UP_REQUESTS,
   COUNT_DOWN_REQUESTS,
   ENABLE_META_MASK_ACCOUNTS,
+  SWITCH_NETWORK,
  } from './constants';
 
 import { getIncKeyAccountByName } from '../../services/incognito/wallet';
@@ -182,5 +183,12 @@ export function updateMetaMask(metaMask) {
   return {
     type: ENABLE_META_MASK_ACCOUNTS,
     metaMask,
+  }
+}
+
+export function updateNetwork(isMainnet) {
+  return {
+    type: SWITCH_NETWORK,
+    isMainnet,
   }
 }

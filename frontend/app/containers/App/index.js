@@ -3,18 +3,6 @@
 */
 
 import {Typography} from '@material-ui/core';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemText from '@material-ui/core/ListItemText';
-import AppsIcon from '@material-ui/icons/Apps';
-import CloudUploadIcon from '@material-ui/icons/CloudUpload';
-import CloudDownloadIcon from '@material-ui/icons/CloudDownload';
-import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
-import ClickAwayListener from '@material-ui/core/ClickAwayListener';
-import Grow from '@material-ui/core/Grow';
-import Paper from '@material-ui/core/Paper';
-import Popper from '@material-ui/core/Popper';
-import MenuItem from '@material-ui/core/MenuItem';
-import MenuList from '@material-ui/core/MenuList';
 import IconButton from '@material-ui/core/IconButton';
 import PetsIcon from '@material-ui/icons/Pets';
 import AppBar from '@material-ui/core/AppBar';
@@ -23,7 +11,7 @@ import Toolbar from '@material-ui/core/Toolbar';
 import withWidth from '@material-ui/core/withWidth';
 // import Accounts from 'containers/accounts/loadable';
 import Accounts from 'containers/accounts/index';
-import WalletPage from 'containers/wallet-page/Loadable';
+import WalletPage from 'containers/wallet-page/index';
 import NotFoundPage from 'containers/NotFoundPage/Loadable';
 import ShieldingPage from 'containers/shielding-page/loadable';
 import UnshieldPage from 'containers/unshielding-page/loadable';
@@ -31,6 +19,7 @@ import UndeployPage from 'containers/undeploy-page/loadable';
 import DeployPage from "containers/deploy-page/loadable";
 import React from 'react';
 import {connect} from 'react-redux';
+import Switch2 from '@material-ui/core/Switch';
 import {BrowserRouter, Route, Switch} from 'react-router-dom';
 import {compose} from 'redux';
 import {createStructuredSelector} from 'reselect';
@@ -38,9 +27,12 @@ import GlobalStyle from '../../global-styles';
 import styles from './styles';
 import {NavLink} from 'react-router-dom';
 import Button from '@material-ui/core/Button';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import FormGroup from '@material-ui/core/FormGroup';
 
 import {loadAccountsThunk} from './middlewares';
 import history from '../../utils/history';
+import {SWITCH_NETWORK} from './constants';
 
 import {Loader} from '../../components/loader';
 
@@ -52,9 +44,11 @@ import {
   makeSelectIsPappsMenuListOpened,
   makeSelectRequestings,
   makeSelecMetaMask,
+  makeSelectConfigNetwork,
 } from './selectors';
 
-import { toggleInfoDialog, togglePappsMenuList, closePappsMenuList } from './actions';
+import { toggleInfoDialog, togglePappsMenuList, closePappsMenuList, updateNetwork } from './actions';
+import {loadTokensInfoThunk} from "../wallet-page/middlewares";
 
 // import injectReducer from 'utils/injectReducer';
 // import { reducer } from './reducer';
@@ -67,11 +61,17 @@ export class App extends React.PureComponent {
     this.closeInfoDialog = this.closeInfoDialog.bind(this);
     this.closePappsMenuList = this.closePappsMenuList.bind(this);
     this.togglePappsMenuList = this.togglePappsMenuList.bind(this);
+    this.handleChange = this.handleChange.bind(this);
   }
 
   componentDidMount() {
-    const {onLoadAccounts} = this.props;
-    onLoadAccounts();
+    const {onLoadAccounts, configNetwork, onSwitchNetwork} = this.props;
+    let network = window.localStorage.getItem(SWITCH_NETWORK);
+    if (network == null) {
+      network = configNetwork.isMainnet;
+    }
+    onLoadAccounts(network === '1');
+    onSwitchNetwork(network === '1');
     // history.push('/accounts');
   }
 
@@ -87,31 +87,40 @@ export class App extends React.PureComponent {
     this.props.onTogglePappsMenuList();
   }
 
+  handleChange = e => {
+    const {configNetwork, onSwitchNetwork, onLoadAccounts, privateIncAccount} = this.props;
+    onSwitchNetwork(!configNetwork.isMainnet);
+    let currentPath = window.location.pathname;
+    let reloadBalances = false;
+    if ((currentPath === '/' || currentPath === '/wallet') && privateIncAccount && privateIncAccount.privateKey) {
+      reloadBalances = true;
+    }
+    onLoadAccounts(!configNetwork.isMainnet, reloadBalances);
+    window.localStorage.setItem(SWITCH_NETWORK, !configNetwork.isMainnet === true ? '1' : '0' );
+  };
+
   buildAppBar() {
     const {
-      tempIncAccount,
       privateIncAccount,
-      isPappsMenuListOpened,
       metaMask,
       classes,
       onLoadAccounts,
+      configNetwork,
     } = this.props;
-    // if (!ethAccount.privateKey || !privateIncAccount.privateKey) {
-    // kovan testnet
     if (!metaMask.isMetaMaskEnabled || metaMask.chainId !== "0x2a" || !privateIncAccount.privateKey) {
       history.push('/wallet');
       return (
         <>
-          {metaMask && metaMask.metaMaskRequiredMess &&
-          <div className={classes.metaMaskMess}>
-            <Typography style={{color: 'white', marginLeft: '10px'}}>{metaMask.metaMaskRequiredMess}</Typography>
-            { !metaMask.isMetaMaskEnabled &&
+          <AppBar position="static" className={classes.appBar}>
+            {metaMask && metaMask.metaMaskRequiredMess &&
+            <div className={classes.metaMaskMess}>
+              <Typography style={{color: 'white', marginLeft: '10px'}}>{metaMask.metaMaskRequiredMess}</Typography>
+              { !metaMask.isMetaMaskEnabled &&
               <Button variant="contained" color="secondary" onClick={onLoadAccounts}
                       style={{color: 'white', marginLeft: '4px'}}>Connect Now</Button>
+              }
+            </div>
             }
-          </div>
-          }
-          <AppBar position="static" className={classes.appBar}>
             <Toolbar>
               <IconButton className={classes.logo} aria-label="logo">
                 <NavLink className={classes.link} activeClassName={classes.activeLink} exact to="/">
@@ -139,11 +148,31 @@ export class App extends React.PureComponent {
             <NavLink className={classes.link} activeClassName={classes.activeLink} exact
                      to="/wallet">Wallet</NavLink>
           </Button>
+          {!configNetwork.isMainnet &&
           <Button color="inherit" className={classes.navItemButton}>
             <NavLink className={classes.link} activeClassName={classes.activeLink} exact
               to="/papps">pApps</NavLink>
           </Button>
-
+          }
+          <FormGroup row className={classes.switchNetwork}>
+            <FormControlLabel
+              control={
+                <Switch2
+                  classes={{
+                    switchBase: classes.iOSSwitchBase,
+                    bar: classes.iOSBar,
+                    icon: classes.iOSIcon,
+                    iconChecked: classes.iOSIconChecked,
+                    checked: classes.iOSChecked,
+                  }}
+                  disableRipple={false}
+                  checked={configNetwork.isMainnet}
+                  onChange={this.handleChange}
+                />
+              }
+              label={<Typography color={"textSecondary"}>Mainnet</Typography>}
+            />
+          </FormGroup>
         </Toolbar>
       </AppBar>
     );
@@ -154,6 +183,7 @@ export class App extends React.PureComponent {
     const {
       isLoadWalletDone,
       requestings,
+      classes,
     } = this.props;
 
     if (!isLoadWalletDone) {
@@ -162,7 +192,7 @@ export class App extends React.PureComponent {
 
     return (
       <BrowserRouter>
-        <div style={styles.root}>
+        <div className={classes.root}>
           {this.buildAppBar()}
           <Switch>
             <Route exact path="/" component={WalletPage}/>
@@ -178,6 +208,7 @@ export class App extends React.PureComponent {
           <Loader isActive={true}/>
           }
           <GlobalStyle/>
+
         </div>
       </BrowserRouter>
     );
@@ -186,10 +217,11 @@ export class App extends React.PureComponent {
 
 export function mapDispatchToProps(dispatch) {
   return {
-    onLoadAccounts: () => dispatch(loadAccountsThunk()),
+    onLoadAccounts: (isMainnet, reloadBalances) => dispatch(loadAccountsThunk(isMainnet, reloadBalances)),
     onToggleInfoDialog: () => dispatch(toggleInfoDialog()),
     onTogglePappsMenuList: () => dispatch(togglePappsMenuList()),
     onClosePappsMenuList: () => dispatch(closePappsMenuList()),
+    onSwitchNetwork: (isMainnet) => dispatch(updateNetwork(isMainnet)),
   };
 }
 
@@ -201,6 +233,7 @@ const mapStateToProps = createStructuredSelector({
   isOpenedInfoDialog: makeSelectIsOpenedInfoDialog(),
   requestings: makeSelectRequestings(),
   metaMask: makeSelecMetaMask(),
+  configNetwork: makeSelectConfigNetwork(),
 });
 
 const withConnect = connect(

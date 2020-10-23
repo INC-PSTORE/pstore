@@ -5,19 +5,19 @@ import {
 } from 'incognito-js';
 import { storage } from '../localStorage';
 import { STORAGE_KEY, INC_WALLET_BACKUP_PASS, INC_WALLET_PASSPHRASE, DEFAULT_PRV_FEE } from '../../common/constants';
-import { isTestnet, getIncognitoFullnode } from "../../common/utils";
 
 let wallet;
 
 // set up environment and init new wallet or load wallet from storage
-export async function setupIncWallet() {
+export async function setupIncWallet(isMainnet, chainURL, apiURL) {
   // load wasm
   await goServices.implementGoMethodUseWasm();
 
   // config SDK
   setConfig({
-    mainnet: !isTestnet(),
-    chainURL: getIncognitoFullnode()
+    mainnet: isMainnet,
+    chainURL: chainURL,
+    apiURL: apiURL,
   });
 
   // storage

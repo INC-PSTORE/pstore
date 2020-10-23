@@ -5,6 +5,11 @@ import {
 
 import Web3 from 'web3';
 import Wallet from 'ethereumjs-wallet';
+import {SWITCH_NETWORK} from "../containers/App/constants";
+import {buildOptions, makeCall} from "../utils/api-call";
+import {getETHTransactionInfoApiRoute} from "../utils/api-routes";
+import {MAINNET_SHIELD_LOCAL_STORAGE, TESTNET_SHIELD_LOCAL_STORAGE} from "../containers/shielding-page/constants";
+import {MAINNET_UNSHIELD_LOCAL_STORAGE, TESTNET_UNSHIELD_LOCAL_STORAGE} from "../containers/unshielding-page/constants";
 const secp256k1 = require('secp256k1');
 const bs58 = require('bs58');
 const eutil = require('ethereumjs-util')
@@ -14,7 +19,11 @@ function isTestnet() {
 }
 
 function getIncognitoContractAddr() {
-  return process.env.INCOGNITO_CONTRACT_ADDRESS;
+  const network = window.localStorage.getItem(SWITCH_NETWORK);
+  if (network !== null && network === '1') {
+    return "0x97875355ef55ae35613029df8b1c8cf8f89c9066";
+  }
+  return "0xE0D5e7217c6C4bc475404b26d763fAD3F14D2b86";
 }
 
 function getIncognitoToBurnCoin() {
@@ -22,11 +31,40 @@ function getIncognitoToBurnCoin() {
 }
 
 function getIncognitoFullnode() {
-  return process.env.INCOGNITO_FULLNODE;
+  // return process.env.INCOGNITO_FULLNODE;
+  const network = window.localStorage.getItem(SWITCH_NETWORK);
+  if (network !== null && network === '1') {
+    return "https://fullnode.incognito.best";
+  }
+  return "https://testnet1.incognito.org/fullnode";
+}
+
+function getApiUrl() {
+  return process.env.API_URL;
 }
 
 function getETHFullnodeHost() {
-  return process.env.ETH_FULLNODE;
+  const network = window.localStorage.getItem(SWITCH_NETWORK);
+  if (network !== null && network === '1') {
+    return "https://mainnet.infura.io/v3/34918000975d4374a056ed78fe21c517";
+  }
+  return "https://kovan.infura.io/v3/34918000975d4374a056ed78fe21c517";
+}
+
+function getLocalStorageKey() {
+  const network = window.localStorage.getItem(SWITCH_NETWORK);
+  if (network !== null && network === '1') {
+    return MAINNET_SHIELD_LOCAL_STORAGE;
+  }
+  return TESTNET_SHIELD_LOCAL_STORAGE;
+}
+
+function getLocalStorageKeyUnshield() {
+  const network = window.localStorage.getItem(SWITCH_NETWORK);
+  if (network !== null && network === '1') {
+    return MAINNET_UNSHIELD_LOCAL_STORAGE;
+  }
+  return TESTNET_UNSHIELD_LOCAL_STORAGE;
 }
 
 function getEtherScanAPIHost() {
@@ -38,232 +76,11 @@ function getIncContractABI() {
 }
 
 function getERC20ContractABI() {
-  return [
-    {
-      "constant": true,
-      "inputs": [],
-      "name": "name",
-      "outputs": [
-        {
-          "name": "",
-          "type": "string"
-        }
-      ],
-      "payable": false,
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "constant": false,
-      "inputs": [
-        {
-          "name": "_spender",
-          "type": "address"
-        },
-        {
-          "name": "_value",
-          "type": "uint256"
-        }
-      ],
-      "name": "approve",
-      "outputs": [
-        {
-          "name": "",
-          "type": "bool"
-        }
-      ],
-      "payable": false,
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "constant": true,
-      "inputs": [],
-      "name": "totalSupply",
-      "outputs": [
-        {
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "payable": false,
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "constant": false,
-      "inputs": [
-        {
-          "name": "_from",
-          "type": "address"
-        },
-        {
-          "name": "_to",
-          "type": "address"
-        },
-        {
-          "name": "_value",
-          "type": "uint256"
-        }
-      ],
-      "name": "transferFrom",
-      "outputs": [
-        {
-          "name": "",
-          "type": "bool"
-        }
-      ],
-      "payable": false,
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "constant": true,
-      "inputs": [],
-      "name": "decimals",
-      "outputs": [
-        {
-          "name": "",
-          "type": "uint8"
-        }
-      ],
-      "payable": false,
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "constant": true,
-      "inputs": [
-        {
-          "name": "_owner",
-          "type": "address"
-        }
-      ],
-      "name": "balanceOf",
-      "outputs": [
-        {
-          "name": "balance",
-          "type": "uint256"
-        }
-      ],
-      "payable": false,
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "constant": true,
-      "inputs": [],
-      "name": "symbol",
-      "outputs": [
-        {
-          "name": "",
-          "type": "string"
-        }
-      ],
-      "payable": false,
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "constant": false,
-      "inputs": [
-        {
-          "name": "_to",
-          "type": "address"
-        },
-        {
-          "name": "_value",
-          "type": "uint256"
-        }
-      ],
-      "name": "transfer",
-      "outputs": [
-        {
-          "name": "",
-          "type": "bool"
-        }
-      ],
-      "payable": false,
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "constant": true,
-      "inputs": [
-        {
-          "name": "_owner",
-          "type": "address"
-        },
-        {
-          "name": "_spender",
-          "type": "address"
-        }
-      ],
-      "name": "allowance",
-      "outputs": [
-        {
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "payable": false,
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "payable": true,
-      "stateMutability": "payable",
-      "type": "fallback"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": true,
-          "name": "owner",
-          "type": "address"
-        },
-        {
-          "indexed": true,
-          "name": "spender",
-          "type": "address"
-        },
-        {
-          "indexed": false,
-          "name": "value",
-          "type": "uint256"
-        }
-      ],
-      "name": "Approval",
-      "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": true,
-          "name": "from",
-          "type": "address"
-        },
-        {
-          "indexed": true,
-          "name": "to",
-          "type": "address"
-        },
-        {
-          "indexed": false,
-          "name": "value",
-          "type": "uint256"
-        }
-      ],
-      "name": "Transfer",
-      "type": "event"
-    }
-  ];
+  return [{"constant":true,"inputs":[],"name":"name","outputs":[{"name":"","type":"string"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_spender","type":"address"},{"name":"_value","type":"uint256"}],"name":"approve","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"totalSupply","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_from","type":"address"},{"name":"_to","type":"address"},{"name":"_value","type":"uint256"}],"name":"transferFrom","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"decimals","outputs":[{"name":"","type":"uint8"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"_owner","type":"address"}],"name":"balanceOf","outputs":[{"name":"balance","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"symbol","outputs":[{"name":"","type":"string"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_to","type":"address"},{"name":"_value","type":"uint256"}],"name":"transfer","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[{"name":"_owner","type":"address"},{"name":"_spender","type":"address"}],"name":"allowance","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"payable":true,"stateMutability":"payable","type":"fallback"},{"anonymous":false,"inputs":[{"indexed":true,"name":"owner","type":"address"},{"indexed":true,"name":"spender","type":"address"},{"indexed":false,"name":"value","type":"uint256"}],"name":"Approval","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"name":"from","type":"address"},{"indexed":true,"name":"to","type":"address"},{"indexed":false,"name":"value","type":"uint256"}],"name":"Transfer","type":"event"}];
 }
 
-function getDefaultSupportedTokens() {
-  if (isTestnet()) {
+function getDefaultSupportedTokens(isMainnet) {
+  if (!isMainnet) {
     return [
       {
         incTokenId: TOKEN_INFO.PRV.tokenId,
@@ -289,13 +106,14 @@ function getDefaultSupportedTokens() {
         pDecimals: 9,
         icon: 'https://s3.amazonaws.com/incognito-org/wallet/cryptocurrency-icons/32@2x/color/dai@2x.png',
       },
-      // {
-      //   incTokenId: '497159cf6c9f8d5a7cffd38d392649fee7b61558689ba631b26ef1b2dd8c9a06',
-      //   extTokenId: '0xf3e0d7bf58c5d455d31ef1c2d5375904df525105',
-      //   tokenSymbol: 'USDT',
-      //   eDecimals: 18,
-      //   pDecimals: 6,
-      // },
+      {
+        incTokenId: '497159cf6c9f8d5a7cffd38d392649fee7b61558689ba631b26ef1b2dd8c9a06',
+        extTokenId: '0xf3e0d7bf58c5d455d31ef1c2d5375904df525105',
+        tokenSymbol: 'USDT',
+        eDecimals: 6,
+        pDecimals: 6,
+        icon: 'https://s3.amazonaws.com/incognito-org/wallet/cryptocurrency-icons/32@2x/color/usdt@2x.png',
+      },
       {
         incTokenId: '61e1efbf6be9decc46fdf8250cdae5be12bee501b65f774a58af4513b645f6a3',
         extTokenId: '0x75b0622cec14130172eae9cf166b92e5c112faff',
@@ -350,33 +168,6 @@ function getDefaultSupportedTokens() {
   ];
 }
 
-function getDefaultSupportedPTokens() {
-  if (isTestnet()) {
-    return [
-      {
-        tokenName: 'PETH',
-      },
-      {
-        tokenName: 'PDAI',
-      },
-      {
-        tokenName: 'PUSDT',
-      },
-    ];
-  }
-  return [
-    {
-      tokenName: 'PETH',
-    },
-    {
-      tokenName: 'PDAI',
-    },
-    {
-      tokenName: 'PUSDT',
-    },
-  ];
-}
-
 function uuidV4() {
   return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, c =>
     (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
@@ -410,6 +201,15 @@ function signMessage(mess, privateKey) {
   return '0x' + signature.r.toString('hex') + signature.s.toString('hex') + '0' + (signature.v - 27).toString(16);
 }
 
+function filterByExtToken(tokenList, extTokenId) {
+  for (let i = 0; i < tokenList.length; i++) {
+    if(tokenList[i].extTokenId === extTokenId) {
+      return tokenList[i];
+    }
+  }
+  return null;
+}
+
 export {
   isTestnet,
   getIncognitoFullnode,
@@ -419,9 +219,12 @@ export {
   getERC20ContractABI,
   getDefaultSupportedTokens,
   getIncognitoToBurnCoin,
-  getDefaultSupportedPTokens,
   getEtherScanAPIHost,
   uuidV4,
   genETHAccFromIncPrivKey,
   signMessage,
+  getApiUrl,
+  filterByExtToken,
+  getLocalStorageKey,
+  getLocalStorageKeyUnshield,
 };

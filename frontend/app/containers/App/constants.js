@@ -56,3 +56,6 @@ export const COUNT_DOWN_REQUESTS =
 
 export const ENABLE_META_MASK_ACCOUNTS =
   'devbowl/App/ENABLE_META_MASk_ACCOUNTS';
+
+export const SWITCH_NETWORK =
+  'devbowl/App/SWITCH_NETWORK';
