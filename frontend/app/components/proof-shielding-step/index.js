@@ -22,6 +22,9 @@ import {
   SHIELDING_PROOF_SUBMITTING,
   SHIELDING_PROOF_SUBMITTED,
   SHIELDING_PROOF_SUBMIT_REJECTED,
+  ETH_DEPOSIT_FAILED,
+  ETH_DEPOSITING_TO_INC_CONTRACT,
+  ETH_DEPOSITED_TO_INC_CONTRACT,
 } from '../../common/constants';
 import {withStyles} from "@material-ui/core/styles";
 
@@ -38,8 +41,8 @@ export class ShieldingProof extends React.PureComponent {
     const { latestUnsuccessfulShielding, onRefreshShieldingProofStep, ethAccount } = this.props;
     onRefreshShieldingProofStep(ethAccount);
 
-    if (!latestUnsuccessfulShielding || latestUnsuccessfulShielding.status !== SHIELDING_PROOF_SUBMITTED) {
-      refresher = setInterval(this.refresh, 5000); // run every 10s
+    if (!latestUnsuccessfulShielding || [ETH_DEPOSITING_TO_INC_CONTRACT, SHIELDING_PROOF_SUBMITTING, ETH_DEPOSITED_TO_INC_CONTRACT].includes(latestUnsuccessfulShielding.status)) {
+      refresher = setInterval(this.refresh, 10000); // run every 10s
     }
   }
 
@@ -52,7 +55,7 @@ export class ShieldingProof extends React.PureComponent {
 
   componentDidUpdate(prevProps) {
     const { latestUnsuccessfulShielding } = this.props;
-    if (latestUnsuccessfulShielding && latestUnsuccessfulShielding.status === SHIELDING_PROOF_SUBMITTED) {
+    if (latestUnsuccessfulShielding && ([SHIELDING_PROOF_SUBMIT_REJECTED, ETH_DEPOSIT_FAILED, SHIELDING_PROOF_SUBMITTED].includes(latestUnsuccessfulShielding.status))) {
       if (refresher) {
         clearInterval(refresher);
       }
@@ -80,13 +83,13 @@ export class ShieldingProof extends React.PureComponent {
     let ethTxInfoRows = [];
     if (ethTxInfo) {
       ethTxInfoRows = [
-        this.createData('Transaction hash', ethTxInfo.transactionHash),
-        this.createData('Status', ethTxInfo.status === 1 ? 'Succeeded' : 'Reverted'),
+        this.createData('Transaction hash', ethTxInfo.hash),
+        this.createData('Status', ethTxInfo.status === 2 ? 'Pending' : 1 ? 'Succeeded' : 'Reverted'),
         this.createData('Block', ethTxInfo.blockNumber),
-        this.createData('From', ethTxInfo.fromAddressStr),
-        this.createData('To', ethTxInfo.toAddressStr),
-        this.createData('Value', ethTxInfo.value), // TODO: convert to Ether
-        this.createData('Transaction Fee', ethTxInfo.txFee), // TODO
+        this.createData('From', ethTxInfo.from),
+        this.createData('To', ethTxInfo.to),
+        this.createData('Value', ethTxInfo.value / 1e18 + ' ETH'),
+        this.createData('Transaction Gas', ethTxInfo.gas),
       ];
     }
 
@@ -153,7 +156,7 @@ export class ShieldingProof extends React.PureComponent {
             </ExpansionPanelDetails>
           </ExpansionPanel>
         }
-        {(!latestUnsuccessfulShielding || latestUnsuccessfulShielding.status !== SHIELDING_PROOF_SUBMITTED) &&
+        {(!latestUnsuccessfulShielding || [ETH_DEPOSITING_TO_INC_CONTRACT, SHIELDING_PROOF_SUBMITTING, ETH_DEPOSITED_TO_INC_CONTRACT].includes(latestUnsuccessfulShielding.status)) &&
           <div className={classes.refresher}>
             <CircularProgress
               variant="indeterminate"

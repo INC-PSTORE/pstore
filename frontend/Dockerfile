@@ -9,14 +9,13 @@ WORKDIR /usr/src/app
 COPY package*.json ./
 
 RUN npm install
-
-RUN npm install https://github.com/blackwine93v/sdk-v2.git#new-meta
 # If you are building your code for production
 # RUN npm ci --only=production
 
 # Bundle app source
 COPY . .
 
+RUN npm run build
 EXPOSE 443
 
 ENV NODE_ENV production
@@ -26,6 +25,7 @@ ENV INCOGNITO_BURN_ADDRESS 12RxahVABnAVCGP3LGwCn8jkQxgw7z1x14wztHzn455TTVpi1wBq9
 ENV INCOGNITO_FULLNODE https://testnet1.incognito.org/fullnode
 ENV ETH_FULLNODE https://kovan.infura.io/v3/34918000975d4374a056ed78fe21c517
 ENV ETHER_SCAN_API_HOST https:///api.etherscan.io/api
+ENV API_URL https://test-api2.incognito.org
+ENV PORT 443
 
-CMD [ "npm", "run", "build" ]
 CMD [ "node", "server" ]

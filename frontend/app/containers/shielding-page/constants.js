@@ -18,3 +18,7 @@ export const UPDATE_SHIELDING_SUCCESS = 'pstuff/ShieldingPage/UPDATE_SHIELDING_S
 export const UPDATE_SHIELDING_FAILURE = 'pstuff/ShieldingPage/UPDATE_SHIELDING_FAILURE';
 
 export const INSUFFICIENT_BALANCES = 'pstuff/ShieldingPage/INSUFFICIENT_BALANCES';
+export const SKIP_FORM = 'pstuff/ShieldingPage/SKIP_FORM';
+export const TESTNET_SHIELD_LOCAL_STORAGE = 'pstuff/ShieldingPage/TESTNET_SHIELD_LOCAL_STORAGE';
+export const MAINNET_SHIELD_LOCAL_STORAGE = 'pstuff/ShieldingPage/MAINNET_SHIELD_LOCAL_STORAGE';
+export const TOOL_TIP_HANDLER = 'pstuff/ShieldingPage/TOOL_TIP_HANDLER';

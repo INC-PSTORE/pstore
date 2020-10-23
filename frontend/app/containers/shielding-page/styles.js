@@ -20,6 +20,40 @@ const styles = theme => ({
       width: '80%',
     },
   },
+  ethSkipStepWrapper: {
+    width: '100%',
+    display: 'flex',
+    flexWrap: 'wrap',
+    flexDirection: 'column',
+    alignItems: 'center',
+  },
+  ethSkipStepButton: {
+    display: 'flex',
+    flexWrap: 'wrap',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    margin: '10px',
+  },
+  ethSkipStep: {
+    margin: theme.spacing.unit,
+    // width: '50%',
+  },
+  skipStep: {
+    display: 'flex',
+    flexWrap: 'wrap',
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginRight: '-6%',
+  },
+  skipStepLink: {
+    padding: '10px 2px 10px 10px',
+    "&:hover": {
+      textDecorationLine: 'underline',
+      border: '1px',
+      cursor: 'pointer',
+    },
+  }
 });
 
 export default styles;

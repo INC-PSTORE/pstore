@@ -15,6 +15,7 @@ import {
   UPDATE_SHIELDING_SUCCESS,
   UPDATE_SHIELDING_FAILURE,
   INSUFFICIENT_BALANCES,
+  SKIP_FORM, TOOL_TIP_HANDLER,
 } from './constants';
 
 export function changeSelectedToken(selectedToken) {
@@ -97,4 +98,18 @@ export function insufficientBalances(insufficientBalancesInfo) {
     type: INSUFFICIENT_BALANCES,
     insufficientBalancesInfo,
   };
+}
+
+export function updateSkipForm(skipForm) {
+  return {
+    type: SKIP_FORM,
+    skipForm,
+  }
+}
+
+export function updateToolTip(isOpenToolTip) {
+  return {
+    type: TOOL_TIP_HANDLER,
+    isOpenToolTip,
+  }
 }

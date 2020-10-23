@@ -6,12 +6,6 @@ import { createSelector } from 'reselect';
 
 const selectShielding = state => state.shielding; // 'shielding' here should match to registered reducer name in index.js
 
-// const makeSelectActiveStep = () =>
-//   createSelector(
-//     selectShielding,
-//     shieldingState => shieldingState.activeStep,
-//   );
-
 const makeSelectFormInfo = () =>
   createSelector(
     selectShielding,
@@ -48,13 +42,26 @@ const makeSelectRefresher = () =>
     shieldingState => shieldingState.refresher,
   );
 
+const makeSelectSkipForm = () =>
+  createSelector(
+    selectShielding,
+    shieldingState => shieldingState.skipForm,
+  );
+
+const makeSelectToolTip = () =>
+  createSelector(
+    selectShielding,
+    shieldingState => shieldingState.isOpenToolTip,
+  );
+
 export {
   selectShielding,
-  // makeSelectActiveStep,
   makeSelectFormInfo,
   makeSelectLatestUnsuccessfulShielding,
   makeSelectETHTxInfo,
   makeSelectDepProofSubmitStatus,
   makeSelectInsufficientBalancesInfo,
   makeSelectRefresher,
+  makeSelectSkipForm,
+  makeSelectToolTip,
 };

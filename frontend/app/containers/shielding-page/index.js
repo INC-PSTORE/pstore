@@ -5,44 +5,47 @@
 import Step from '@material-ui/core/Step';
 import StepLabel from '@material-ui/core/StepLabel';
 import Stepper from '@material-ui/core/Stepper';
-import { withStyles } from '@material-ui/core/styles';
+import OutlinedInput from '@material-ui/core/OutlinedInput';
+import InputAdornment from '@material-ui/core/InputAdornment';
+import FormHelperText from '@material-ui/core/FormHelperText';
+import {withStyles} from '@material-ui/core/styles';
 import withWidth from '@material-ui/core/withWidth';
 import React from 'react';
-import { connect } from 'react-redux';
-import { compose } from 'redux';
-import { createStructuredSelector } from 'reselect';
+import {connect} from 'react-redux';
+import {compose} from 'redux';
+import {createStructuredSelector} from 'reselect';
 import injectReducer from 'utils/injectReducer';
+import Grid from '@material-ui/core/Grid';
+import Tooltip from '@material-ui/core/Tooltip';
+import ClickAwayListener from '@material-ui/core/ClickAwayListener';
+import HelpOutlineIcon from '@material-ui/icons/HelpOutline';
 
 import {
   ETH_DEPOSITED_TO_INC_CONTRACT,
   ETH_DEPOSITING_TO_INC_CONTRACT,
-  PRIVATE_TRANSFERRED,
-  PRIVATE_TRANSFERRING,
-  PRIVATE_TRANSFER_FAILED,
   ETH_DEPOSIT_FAILED,
   SHIELDING_PROOF_SUBMITTED,
   SHIELDING_PROOF_SUBMITTING,
   SHIELDING_PROOF_SUBMIT_REJECTED,
-  SHIELDING_FINISHED,
 } from '../../common/constants';
 
-import { getDefaultSupportedTokens } from '../../common/utils';
-import PrivateTransfer from '../../components/private-transfer-shielding-step';
+import {getDefaultSupportedTokens, getLocalStorageKey} from '../../common/utils';
 import ShieldingProof from '../../components/proof-shielding-step';
 import SmartContractDeposit from '../../components/sc-deposit-shielding-step';
 
 import {
+  makeSelectConfigNetwork,
   makeSelectPrivateIncAccount,
   makeSelectTempIncAccount,
 } from '../App/selectors';
 
-import { changeAmount, changeSelectedToken } from './actions';
+import {changeAmount, changeSelectedToken, updateShieldingSuccess, updateSkipForm, updateToolTip} from './actions';
 
 import {
   depositThunk,
   getLatestUnsuccessfulShieldingThunk,
   refreshShieldingProofStepThunk,
-  updateShieldingThunk,
+  completeShieldingThunk, updateShieldingSkipStepThunk,
 } from './middlewares';
 
 import reducer from './reducer';
@@ -54,11 +57,13 @@ import {
   makeSelectETHTxInfo,
   makeSelectDepProofSubmitStatus,
   makeSelectInsufficientBalancesInfo,
-  makeSelectRefresher,
+  makeSelectRefresher, makeSelectSkipForm, makeSelectToolTip,
 } from './selectors';
 
 import styles from './styles';
-
+import FormControl from "@material-ui/core/FormControl";
+import InputLabel from "@material-ui/core/InputLabel";
+import {Button} from "@material-ui/core";
 
 function getSteps() {
   // return ['Deposit to Incognito contract', 'Get & submit proof', 'Transfer to private account'];
@@ -73,28 +78,76 @@ export class ShieldingPage extends React.PureComponent {
     this.changeSelectedToken = this.changeSelectedToken.bind(this);
     this.deposit = this.deposit.bind(this);
     this.checkBalances = this.checkBalances.bind(this);
+    this.skipStep = this.skipStep.bind(this);
+    this.updateEthDepositTx = this.updateEthDepositTx.bind(this);
+    this.handleDepositInput = this.handleDepositInput.bind(this);
+    this.createNewShielding = this.createNewShielding.bind(this);
+    this.handleTooltipOpen = this.handleTooltipOpen.bind(this);
+    this.handleTooltipClose = this.handleTooltipClose.bind(this);
   }
 
   componentDidMount() {
     const {
       onGetLatestUnsuccessfulShielding,
+      onUpdateSkipForm,
     } = this.props;
     onGetLatestUnsuccessfulShielding(null);
+    onUpdateSkipForm(null);
   }
 
   checkBalances() {
-    const { history, latestUnsuccessfulShielding, onUpdateShielding } = this.props;
-    onUpdateShielding(latestUnsuccessfulShielding, history);
+    const {history, latestUnsuccessfulShielding, onUpdateCompleteShielding} = this.props;
+    onUpdateCompleteShielding(latestUnsuccessfulShielding, history);
+  }
+
+  skipStep() {
+    const {onUpdateSkipForm, skipForm} = this.props;
+    let tempSkipForm;
+    if (!skipForm) {
+      tempSkipForm = {isOpen: true};
+    } else {
+      tempSkipForm = {isOpen: !skipForm.isOpen, message: skipForm.message, ethTxId: skipForm.ethTxId};
+    }
+    onUpdateSkipForm(tempSkipForm);
+  }
+
+  updateEthDepositTx() {
+    const {skipForm, onUpdateSkipForm, onUpdateShielding} = this.props;
+    let tempSkipForm;
+    if (skipForm && skipForm.ethTxId && /^0x([A-Fa-f0-9]{64})$/.test(skipForm.ethTxId)) {
+      onUpdateShielding(skipForm);
+    } else {
+      tempSkipForm = {isOpen: true, ethTxId: skipForm.ethTxId, message: "Invalid eth transaction"};
+      onUpdateSkipForm(tempSkipForm);
+    }
+  }
+
+  handleDepositInput = e => {
+    const {skipForm, onUpdateSkipForm} = this.props;
+    if (skipForm) {
+      skipForm.ethTxId = e.target.value;
+    }
+    onUpdateSkipForm(skipForm ? skipForm : {ethTxId: e.target.value});
+  }
+
+  handleTooltipClose() {
+    const {onUpdateToolTip} = this.props;
+    onUpdateToolTip(false);
+  }
+
+  handleTooltipOpen() {
+    const {onUpdateToolTip} = this.props;
+    onUpdateToolTip(true);
   }
 
   deposit(ethAccount, tempIncAccount, privateIncAccount, formInfo) {
-    const { onDeposit } = this.props;
+    const {onDeposit} = this.props;
     onDeposit(ethAccount, tempIncAccount, privateIncAccount, formInfo);
   }
 
   changeSelectedToken(extTokenId) {
-    const { onChangeSelectedToken } = this.props;
-    let supportedTokens = getDefaultSupportedTokens();
+    const {onChangeSelectedToken, configNetwork} = this.props;
+    let supportedTokens = getDefaultSupportedTokens(configNetwork.isMainnet);
     supportedTokens.shift();
     let selectedToken = {};
     for (const supportedToken of supportedTokens) {
@@ -104,6 +157,12 @@ export class ShieldingPage extends React.PureComponent {
       }
     }
     onChangeSelectedToken(selectedToken);
+  }
+
+  createNewShielding() {
+    const {onCreateNewShielding} = this.props;
+    window.localStorage.removeItem(getLocalStorageKey());
+    onCreateNewShielding();
   }
 
   displayStepContent() {
@@ -117,6 +176,7 @@ export class ShieldingPage extends React.PureComponent {
       ethTxInfo,
       insufficientBalancesInfo,
       onRefreshShieldingProofStep,
+      configNetwork,
     } = this.props;
     const scDepComp = (
       <SmartContractDeposit
@@ -129,6 +189,7 @@ export class ShieldingPage extends React.PureComponent {
         onDeposit={this.deposit}
         onChangeSelectedToken={this.changeSelectedToken}
         onChangeAmount={onChangeAmount}
+        configNetwork={configNetwork}
       />
     );
     const shieldingProofComp = (
@@ -140,36 +201,22 @@ export class ShieldingPage extends React.PureComponent {
         onCheckBalances={this.checkBalances}
       />
     );
-    // const privTransferComp = (
-    //   <PrivateTransfer
-    //     latestUnsuccessfulShielding={latestUnsuccessfulShielding}
-    //   />
-    // );
 
 
     if (!latestUnsuccessfulShielding) {
-      return { comp: scDepComp, step: 0 };
+      return {comp: scDepComp, step: 0};
     }
     switch (latestUnsuccessfulShielding.status) {
       case ETH_DEPOSIT_FAILED:
-        return { comp: scDepComp, step: 0 };
       case ETH_DEPOSITING_TO_INC_CONTRACT:
       case ETH_DEPOSITED_TO_INC_CONTRACT:
       case SHIELDING_PROOF_SUBMITTING:
       case SHIELDING_PROOF_SUBMITTED:
       case SHIELDING_PROOF_SUBMIT_REJECTED:
-        return { comp: shieldingProofComp, step: 1 };
-
-      case SHIELDING_FINISHED:
-        return { comp: scDepComp, step: 0 };
-
-      // case PRIVATE_TRANSFERRING:
-      // case PRIVATE_TRANSFERRED:
-      // case PRIVATE_TRANSFER_FAILED:
-      //   return { comp: privTransferComp, step: 2 };
+        return {comp: shieldingProofComp, step: 1};
 
       default:
-        return { comp: scDepComp, step: 0 };
+        return {comp: scDepComp, step: 0};
     }
   }
 
@@ -177,9 +224,23 @@ export class ShieldingPage extends React.PureComponent {
     const steps = getSteps();
     const {
       classes,
+      latestUnsuccessfulShielding,
+      skipForm,
+      ethTxInfo,
+      isOpenToolTip,
     } = this.props;
 
-    const { comp, step } = this.displayStepContent();
+    let message = ">> skip step 1";
+    if (latestUnsuccessfulShielding) {
+      message = ">> update deposit eth transaction hash";
+    }
+    let helperText = "Submit when you already deposited to incognito contract";
+    if (latestUnsuccessfulShielding) {
+      helperText = "Update Ethereum tx id if you've updated gas price on metamask";
+    }
+
+
+    const {comp, step} = this.displayStepContent();
     return (
       <div className={classes.root}>
         <Stepper alternativeLabel activeStep={step} className={classes.stepper}>
@@ -190,6 +251,74 @@ export class ShieldingPage extends React.PureComponent {
           ))}
         </Stepper>
         {comp}
+        <div className={classes.ethSkipStepWrapper}>
+          {skipForm && skipForm.isOpen
+            ?
+            <FormControl fullWidth className={classes.ethSkipStep} variant="outlined">
+              <InputLabel htmlFor="outlined-adornment-amount">Eth transaction hash</InputLabel>
+              <OutlinedInput
+                error={!!(skipForm && skipForm.message)}
+                id="outlined-adornment-amount"
+                onChange={this.handleDepositInput}
+                labelWidth={150}
+              />
+              {skipForm.message &&
+              <FormHelperText id="component-error-text">{skipForm.message}</FormHelperText>
+              }
+              <div className={classes.ethSkipStepButton}>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={this.updateEthDepositTx}
+                  style={{margin: 5}}
+                >Submit</Button>
+                <Button
+                  onClick={this.skipStep}
+                  variant="contained"
+                  style={{margin: 5}}
+                >Cancel</Button>
+              </div>
+            </FormControl>
+            :
+            (!latestUnsuccessfulShielding || !ethTxInfo || (latestUnsuccessfulShielding.status === ETH_DEPOSITING_TO_INC_CONTRACT && ethTxInfo.status === 2))
+              ?
+              <div className={classes.skipStep}>
+              <a className={classes.skipStepLink} onClick={this.skipStep}> {message} </a> <Grid item>
+                <ClickAwayListener onClickAway={this.handleTooltipClose}>
+                  <div>
+                    <Tooltip
+                      PopperProps={{
+                        disablePortal: true,
+                      }}
+                      onClose={this.handleTooltipClose}
+                      open={isOpenToolTip}
+                      disableFocusListener
+                      disableHoverListener
+                      disableTouchListener
+                      title={helperText}
+                      leaveDelay={200}
+                    >
+                      <Button onClick={this.handleTooltipOpen}><HelpOutlineIcon fontSize={'16'}/></Button>
+                    </Tooltip>
+                  </div>
+                </ClickAwayListener>
+              </Grid>
+
+              </div>
+              :
+              <></>
+          }
+        </div>
+        {/*in case transaction from eth or inc failed*/}
+        <div>
+          {latestUnsuccessfulShielding &&
+          (latestUnsuccessfulShielding.status === SHIELDING_PROOF_SUBMIT_REJECTED ||
+            latestUnsuccessfulShielding.status === ETH_DEPOSIT_FAILED) &&
+          <Button onClick={this.createNewShielding}>
+            Create New Shield
+          </Button>
+          }
+        </div>
       </div>
     );
   }
@@ -202,7 +331,11 @@ export function mapDispatchToProps(dispatch) {
     onChangeAmount: (changingAmount) => dispatch(changeAmount(changingAmount)),
     onGetLatestUnsuccessfulShielding: (ethAccount) => dispatch(getLatestUnsuccessfulShieldingThunk(ethAccount)),
     onRefreshShieldingProofStep: (ethAccount) => dispatch(refreshShieldingProofStepThunk(ethAccount)),
-    onUpdateShielding: (latestUnsuccessfulShielding, history) => dispatch(updateShieldingThunk(latestUnsuccessfulShielding, history)),
+    onUpdateCompleteShielding: (latestUnsuccessfulShielding, history) => dispatch(completeShieldingThunk(latestUnsuccessfulShielding, history)),
+    onUpdateShielding: (skipForm) => dispatch(updateShieldingSkipStepThunk(skipForm)),
+    onUpdateSkipForm: (skipForm) => dispatch(updateSkipForm(skipForm)),
+    onCreateNewShielding: () => dispatch(updateShieldingSuccess(null)),
+    onUpdateToolTip: (isOpenToolTip) => dispatch(updateToolTip(isOpenToolTip)),
   };
 }
 
@@ -215,6 +348,9 @@ const mapStateToProps = createStructuredSelector({
   depProofSubmitStatus: makeSelectDepProofSubmitStatus(),
   insufficientBalancesInfo: makeSelectInsufficientBalancesInfo(),
   refresher: makeSelectRefresher(),
+  configNetwork: makeSelectConfigNetwork(),
+  skipForm: makeSelectSkipForm(),
+  isOpenToolTip: makeSelectToolTip(),
 });
 
 const withConnect = connect(
@@ -222,7 +358,7 @@ const withConnect = connect(
   mapDispatchToProps,
 );
 
-const withReducer = injectReducer({ key: 'shielding', reducer });
+const withReducer = injectReducer({key: 'shielding', reducer});
 
 const withStylesShieldingPage = withStyles(styles);
 const withWidthShieldingPage = withWidth();

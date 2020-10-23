@@ -14,7 +14,7 @@ import {
   UPDATE_SHIELDING,
   UPDATE_SHIELDING_SUCCESS,
   UPDATE_SHIELDING_FAILURE,
-  INSUFFICIENT_BALANCES,
+  INSUFFICIENT_BALANCES, SKIP_FORM, TOOL_TIP_HANDLER,
 } from './constants';
 import { CardActions } from '@material-ui/core';
 
@@ -32,6 +32,8 @@ export const initialState = {
   ethTxInfo: null,
   insufficientBalancesInfo: null,
   refresher: null,
+  skipForm: null,
+  isOpenToolTip: false,
 };
 
 function updateFormInfo(state, action, fieldName) {
@@ -122,7 +124,16 @@ function shieldingReducer(state = initialState, action) {
         ...state,
         insufficientBalancesInfo: action.insufficientBalancesInfo,
       };
-
+    case SKIP_FORM:
+      return {
+        ...state,
+        skipForm: action.skipForm,
+      }
+    case TOOL_TIP_HANDLER:
+      return {
+        ...state,
+        isOpenToolTip: action.isOpenToolTip,
+      }
     default:
       return state;
   }

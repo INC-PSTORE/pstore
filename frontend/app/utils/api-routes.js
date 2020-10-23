@@ -9,6 +9,14 @@ export function getCreateShieldingApiRoute() {
   return `${buildApiServer()}/shieldings`;
 }
 
+export function getPrepareProof() {
+  return `${buildApiServer()}/execution/eth-proof/prepare`;
+}
+
+export function getPrepareBurnProof() {
+  return `${buildApiServer()}/execution/inc-proof/prepare`;
+}
+
 export function getUpdateShieldingApiRoute(shieldingId) {
   return `${buildApiServer()}/shieldings/${shieldingId}`;
 }

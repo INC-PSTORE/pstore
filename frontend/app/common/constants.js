@@ -37,12 +37,12 @@ export const INC_BURN_TO_UNSHIELD_INIT = 1
 export const INC_BURNED_TO_UNSHIELD    = 2
 export const INC_BURNED_NOT_FOUND      = 3
 export const INC_BURNED_SUCCESS        = 4
-export const INC_BURNED_FAILURE        = 5
+export const INC_BURNED_FAILED         = 5
 export const INC_TRANSACTION_REJECTED  = 6
 
 // Unshield statuses
 export const ETH_WITHDRAW_SUCCESS      = 10
-export const ETH_WITHDRAW_FAILURE      = 11
+export const ETH_WITHDRAW_FAILED       = 11
 export const ETH_SUBMITING_TX          = 12
 export const ETH_WITHDRAW_REJECTED     = 13
 export const ETH_SUBMITED_TX           = 14
