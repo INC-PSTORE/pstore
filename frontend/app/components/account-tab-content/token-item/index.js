@@ -128,7 +128,6 @@ class TokenItem extends React.Component {
     }
 
     async loadDeployedBalance(account, token) {
-        console.log('hahah: ', account.getAddressString());
         try {
             this.setState({ isLoading: true });
             const incContractAddr = getIncognitoContractAddr();

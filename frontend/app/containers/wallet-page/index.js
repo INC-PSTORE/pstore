@@ -29,6 +29,7 @@ import {
   createPrivateIncAccountAction, importPrivateIncAccountAction,
 } from '../App/actions';
 import {
+  makeSelectConfigNetwork,
   makeSelectPrivateIncAccount,
 } from "../App/selectors";
 import styles from './styles';
@@ -105,6 +106,7 @@ export class WalletPage extends React.PureComponent {
       privateIncAccount,
       selectedWalletToken,
       isShowTransfer,
+      configNetwork,
     } = this.props;
 
     if (privateIncAccount.privateKey) {
@@ -118,24 +120,26 @@ export class WalletPage extends React.PureComponent {
               </div>
             </SectionView>
           </div>
-          <div className={classes.sideActionButtons}>
-            <Button
-              className={classes.sideButton}
-              variant="outlined"
-              color="primary"
-              onClick={this.goToDeploy}
-            >
-              Deposit to pApps
-                </Button>
-            <Button
-              className={classes.sideButton}
-              variant="outlined"
-              color="primary"
-              onClick={this.goToUndeploy}
-            >
-              Withdraw from pApps
-                </Button>
-          </div>
+          { !configNetwork.isMainnet &&
+            <div className={classes.sideActionButtons}>
+              <Button
+                className={classes.sideButton}
+                variant="outlined"
+                color="primary"
+                onClick={this.goToDeploy}
+              >
+                Deposit to pApps
+              </Button>
+              <Button
+                className={classes.sideButton}
+                variant="outlined"
+                color="primary"
+                onClick={this.goToUndeploy}
+              >
+                Withdraw from pApps
+              </Button>
+            </div>
+          }
           <div className={classes.balances}>
             <SectionView label='Balances'>
               <Table className={classes.table}>
@@ -220,6 +224,7 @@ const mapStateToProps = createStructuredSelector({
   tokens: makeSelectTokens(),
   isShowTransfer: makeSelectIsShowTransfer(),
   selectedWalletToken: makeSelectSelectedWalletToken(),
+  configNetwork: makeSelectConfigNetwork(),
 });
 
 const mapDispatchToProps = (dispatch) => {

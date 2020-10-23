@@ -57,7 +57,12 @@ const styles = theme => ({
   },
   '@media (max-width: 1000px)': {
     root: {
-      width: '80%',
+      width: '80% !important',
+    },
+  },
+  '@media (max-width: 1300px)': {
+    root: {
+      width: '70%',
     },
   },
 });

@@ -46,8 +46,8 @@ export class BurnToDeploy extends React.PureComponent {
   }
 
   buildSupportedTokenMenuItems() {
-    const { classes } = this.props;
-    let supportedCoins = getDefaultSupportedTokens();
+    const { classes, configNetwork } = this.props;
+    let supportedCoins = getDefaultSupportedTokens(configNetwork.isMainnet);
     supportedCoins.shift()
     return supportedCoins.map(item =>
       <MenuItem key={item.incTokenId} value={item.incTokenId}>
