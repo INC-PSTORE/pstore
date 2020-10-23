@@ -17,6 +17,7 @@ import {
   COUNT_UP_REQUESTS,
   COUNT_DOWN_REQUESTS,
   ENABLE_META_MASK_ACCOUNTS,
+  SWITCH_NETWORK,
 } from './constants';
 
 import {
@@ -55,7 +56,21 @@ export const initialState = {
     metaMaskRequiredMess: null,
     metaMaskAccounts: null,
     chainId: 1,
-  }
+  },
+  configNetwork: {
+    isMainnet: false,
+    // mainnet
+    mainnetFullNodeUrl: "https://fullnode.incognito.best",
+    mainnetApiUrl: "https://api.incognito.org",
+    // mainnetVault: "0x97875355ef55ae35613029df8b1c8cf8f89c9066",
+    // mainnetEthFullNode: "https://mainnet.infura.io/v3/34918000975d4374a056ed78fe21c517",
+
+    // testnet
+    testnetFullNodeUrl: "https://testnet1.incognito.org/fullnode",
+    testnetApiUrl: "https://test-api2.incognito.org",
+    // testnetVault: "0xE0D5e7217c6C4bc475404b26d763fAD3F14D2b86",
+    // testnetEthFullNode: "https://kovan.infura.io/v3/34918000975d4374a056ed78fe21c517",
+  },
 };
 
 function addPrivateIncAccount(state, action) {
@@ -193,7 +208,14 @@ function appReducer(state = initialState, action) {
           chainId: action.metaMask.chainId,
         }
       }
-
+    case SWITCH_NETWORK:
+      return {
+        ...state,
+        configNetwork: {
+          ...state.configNetwork,
+          isMainnet: action.isMainnet,
+        }
+      }
     default:
       return state;
   }

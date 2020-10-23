@@ -48,9 +48,9 @@ export class SmartContractDeposit extends React.PureComponent {
   }
 
   buildSupportedTokenMenuItems() {
-    const { classes } = this.props;
+    const { classes, configNetwork} = this.props;
     // TODO: get supported tokens from incognito's api
-    let supportedTokens = getDefaultSupportedTokens();
+    let supportedTokens = getDefaultSupportedTokens(configNetwork.isMainnet);
     supportedTokens.shift();
     return supportedTokens.map(item =>
       <MenuItem key={item.extTokenId} value={item.extTokenId} >
@@ -67,7 +67,7 @@ export class SmartContractDeposit extends React.PureComponent {
   }
 
   render() {
-    const { classes, formInfo, insufficientBalancesInfo, actionButtonText } = this.props;
+    const { classes, formInfo, insufficientBalancesInfo, actionButtonText} = this.props;
     return (
       <div className={classes.root}>
         <TextField

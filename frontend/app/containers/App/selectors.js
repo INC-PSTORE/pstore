@@ -22,6 +22,7 @@ const makeSelectIsPappsMenuListOpened = () => createSelector(selectApp, appState
 const makeSelectRequestings = () => createSelector(selectApp, appState => appState.requestings);
 
 const makeSelecMetaMask = () => createSelector(selectApp, appState => appState.metaMask);
+const makeSelectConfigNetwork = () => createSelector(selectApp, appState => appState.configNetwork);
 
 export {
   makeSelectLocation,
@@ -38,4 +39,5 @@ export {
 
   makeSelectRequestings,
   makeSelecMetaMask,
+  makeSelectConfigNetwork,
 };

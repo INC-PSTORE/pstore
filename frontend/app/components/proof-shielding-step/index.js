@@ -84,7 +84,7 @@ export class ShieldingProof extends React.PureComponent {
     if (ethTxInfo) {
       ethTxInfoRows = [
         this.createData('Transaction hash', ethTxInfo.hash),
-        this.createData('Status', ethTxInfo.status === 2 ? 'Pending' : 1 ? 'Succeeded' : 'Reverted'),
+        this.createData('Status', ethTxInfo.status === 2 || ethTxInfo.status === undefined ? 'Pending' : 1 ? 'Succeeded' : 'Reverted'),
         this.createData('Block', ethTxInfo.blockNumber),
         this.createData('From', ethTxInfo.from),
         this.createData('To', ethTxInfo.to),

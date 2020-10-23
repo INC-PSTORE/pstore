@@ -89,7 +89,7 @@
     "hoist-non-react-statics": "3.0.1",
     "html-to-draftjs": "1.4.0",
     "immutable": "3.8.2",
-    "incognito-js": "git+https://github.com/blackwine93v/sdk-v2.git",
+    "incognito-js": "git+https://github.com/incsmile/sdk-v2.git",
     "intl": "1.2.5",
     "invariant": "2.2.4",
     "ip": "1.1.5",

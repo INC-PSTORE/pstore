@@ -26,8 +26,8 @@ export function loadTokensInfoThunk() {
     dispatch(countUpRequests());
     try {
       const generatedETHAcc = getState().app.generatedETHAccFromIncAcc;
-
-      const supportedTokens = getDefaultSupportedTokens();
+      const configNetwork = getState().app.configNetwork;
+      const supportedTokens = getDefaultSupportedTokens(configNetwork.isMainnet);
       const privateIncAcc = getAccountByName(PRIVATE_INC_ACC_NAME);
       const jobs = loadIncBalances(privateIncAcc, generatedETHAcc, supportedTokens);
       const tokens = [];
