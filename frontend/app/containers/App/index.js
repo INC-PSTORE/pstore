@@ -9,8 +9,6 @@ import AppBar from '@material-ui/core/AppBar';
 import {withStyles} from '@material-ui/core/styles';
 import Toolbar from '@material-ui/core/Toolbar';
 import withWidth from '@material-ui/core/withWidth';
-// import Accounts from 'containers/accounts/loadable';
-import Accounts from 'containers/accounts/index';
 import WalletPage from 'containers/wallet-page/index';
 import NotFoundPage from 'containers/NotFoundPage/Loadable';
 import ShieldingPage from 'containers/shielding-page/loadable';
@@ -72,7 +70,6 @@ export class App extends React.PureComponent {
     }
     onLoadAccounts(network === '1');
     onSwitchNetwork(network === '1');
-    // history.push('/accounts');
   }
 
   closeInfoDialog() {
@@ -89,14 +86,12 @@ export class App extends React.PureComponent {
 
   handleChange = e => {
     const {configNetwork, onSwitchNetwork, onLoadAccounts, privateIncAccount} = this.props;
-    onSwitchNetwork(!configNetwork.isMainnet);
     let currentPath = window.location.pathname;
-    let reloadBalances = false;
     if ((currentPath === '/' || currentPath === '/wallet') && privateIncAccount && privateIncAccount.privateKey) {
-      reloadBalances = true;
+      onSwitchNetwork(!configNetwork.isMainnet);
+      onLoadAccounts(!configNetwork.isMainnet, true);
+      window.localStorage.setItem(SWITCH_NETWORK, !configNetwork.isMainnet ? '1' : '0' );
     }
-    onLoadAccounts(!configNetwork.isMainnet, reloadBalances);
-    window.localStorage.setItem(SWITCH_NETWORK, !configNetwork.isMainnet === true ? '1' : '0' );
   };
 
   buildAppBar() {
@@ -107,7 +102,7 @@ export class App extends React.PureComponent {
       onLoadAccounts,
       configNetwork,
     } = this.props;
-    if (!metaMask.isMetaMaskEnabled || metaMask.chainId !== "0x2a" || !privateIncAccount.privateKey) {
+    if (!metaMask.isMetaMaskEnabled || metaMask.chainId !== "0x2a" && metaMask.chainId !== "0x1" || (!configNetwork.isMainnet && metaMask.chainId !== "0x2a") || (configNetwork.isMainnet && metaMask.chainId !== "0x1") || !privateIncAccount.privateKey) {
       history.push('/wallet');
       return (
         <>

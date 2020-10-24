@@ -39,7 +39,7 @@ import {
   makeSelectTempIncAccount,
 } from '../App/selectors';
 
-import {changeAmount, changeSelectedToken, updateShieldingSuccess, updateSkipForm, updateToolTip} from './actions';
+import {updateValidateForm, changeAmount, changeSelectedToken, updateShieldingSuccess, updateSkipForm, updateToolTip} from './actions';
 
 import {
   depositThunk,
@@ -51,19 +51,22 @@ import {
 import reducer from './reducer';
 
 import {
-  // makeSelectActiveStep,
   makeSelectFormInfo,
   makeSelectLatestUnsuccessfulShielding,
   makeSelectETHTxInfo,
   makeSelectDepProofSubmitStatus,
   makeSelectInsufficientBalancesInfo,
   makeSelectRefresher, makeSelectSkipForm, makeSelectToolTip,
+  makeSelectValidateForm,
 } from './selectors';
 
 import styles from './styles';
 import FormControl from "@material-ui/core/FormControl";
 import InputLabel from "@material-ui/core/InputLabel";
 import {Button} from "@material-ui/core";
+import Snackbar from "@material-ui/core/Snackbar";
+import IconButton from "@material-ui/core/IconButton";
+import CloseIcon from "@material-ui/icons/Close";
 
 function getSteps() {
   // return ['Deposit to Incognito contract', 'Get & submit proof', 'Transfer to private account'];
@@ -84,6 +87,7 @@ export class ShieldingPage extends React.PureComponent {
     this.createNewShielding = this.createNewShielding.bind(this);
     this.handleTooltipOpen = this.handleTooltipOpen.bind(this);
     this.handleTooltipClose = this.handleTooltipClose.bind(this);
+    this.handleSnackbarClose = this.handleSnackbarClose.bind(this);
   }
 
   componentDidMount() {
@@ -93,6 +97,16 @@ export class ShieldingPage extends React.PureComponent {
     } = this.props;
     onGetLatestUnsuccessfulShielding(null);
     onUpdateSkipForm(null);
+  }
+
+  handleSnackbarClose(event, reason) {
+    if (reason === 'clickaway') {
+      return;
+    }
+    const {formValidate, onUpdateValidateForm} = this.props;
+    if (formValidate && formValidate.snackBar) {
+      onUpdateValidateForm(null);
+    }
   }
 
   checkBalances() {
@@ -228,6 +242,7 @@ export class ShieldingPage extends React.PureComponent {
       skipForm,
       ethTxInfo,
       isOpenToolTip,
+      formValidate,
     } = this.props;
 
     let message = ">> skip step 1";
@@ -243,6 +258,29 @@ export class ShieldingPage extends React.PureComponent {
     const {comp, step} = this.displayStepContent();
     return (
       <div className={classes.root}>
+        {formValidate && formValidate.snackBar && formValidate.snackBar.isError &&
+        <Snackbar
+          className={classes.snackBar}
+          ContentProps={{
+            className: classes.snackBarContent,
+          }}
+          open={formValidate.snackBar.isError}
+          autoHideDuration={3000}
+          message={formValidate && formValidate.snackBar.message ? formValidate.snackBar.message : ""}
+          onClose={this.handleSnackbarClose}
+          anchorOrigin={{
+            vertical: 'top',
+            horizontal: 'right',
+          }}
+          action={
+            <React.Fragment>
+              <IconButton size="small" aria-label="close" color="inherit" onClick={this.handleSnackbarClose}>
+                <CloseIcon fontSize="small"/>
+              </IconButton>
+            </React.Fragment>
+          }
+        />
+        }
         <Stepper alternativeLabel activeStep={step} className={classes.stepper}>
           {steps.map((label) => (
             <Step key={label}>
@@ -336,6 +374,7 @@ export function mapDispatchToProps(dispatch) {
     onUpdateSkipForm: (skipForm) => dispatch(updateSkipForm(skipForm)),
     onCreateNewShielding: () => dispatch(updateShieldingSuccess(null)),
     onUpdateToolTip: (isOpenToolTip) => dispatch(updateToolTip(isOpenToolTip)),
+    onUpdateValidateForm: (validateForm) => dispatch(updateValidateForm(validateForm)),
   };
 }
 
@@ -351,6 +390,7 @@ const mapStateToProps = createStructuredSelector({
   configNetwork: makeSelectConfigNetwork(),
   skipForm: makeSelectSkipForm(),
   isOpenToolTip: makeSelectToolTip(),
+  formValidate: makeSelectValidateForm(),
 });
 
 const withConnect = connect(

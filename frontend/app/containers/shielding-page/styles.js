@@ -53,7 +53,14 @@ const styles = theme => ({
       border: '1px',
       cursor: 'pointer',
     },
-  }
+  },
+  snackBar: {
+    marginTop: "3%",
+  },
+  snackBarContent: {
+    backgroundColor: "#f44336",
+    color: "white",
+  },
 });
 
 export default styles;

@@ -22,3 +22,4 @@ export const SKIP_FORM = 'pstuff/ShieldingPage/SKIP_FORM';
 export const TESTNET_SHIELD_LOCAL_STORAGE = 'pstuff/ShieldingPage/TESTNET_SHIELD_LOCAL_STORAGE';
 export const MAINNET_SHIELD_LOCAL_STORAGE = 'pstuff/ShieldingPage/MAINNET_SHIELD_LOCAL_STORAGE';
 export const TOOL_TIP_HANDLER = 'pstuff/ShieldingPage/TOOL_TIP_HANDLER';
+export const UPDATE_VALIDATE_INPUT = 'pstuff/ShieldingPage/UPDATE_VALIDATE_INPUT';

@@ -17,6 +17,7 @@ import {
     createETHAccountAction, importETHAccountAction } from '../App/actions';
 import { ACCOUNT_TYPE } from '../accounts/constants';
 import { getDefaultSupportedTokens } from '../../common/utils';
+import {makeSelectConfigNetwork} from "../App/selectors";
 
 function mapAction(privIncAction, tempIncAction, ethAction, tabId) {
     if (tabId === PRIV_INC_ACC_TAB_ID) {
@@ -78,8 +79,8 @@ class AccountContent extends React.Component {
     }
 
     getTokenList() {
-        const { accountType } = this.state;
-        const supportedTokens = getDefaultSupportedTokens();
+        const { accountType, configNetwork } = this.state;
+        const supportedTokens = getDefaultSupportedTokens(configNetwork.isMainnet);
         
         if (accountType === ACCOUNT_TYPE.INC) {
             return supportedTokens.filter(token => !!token.incTokenId).map(token => ({
@@ -126,7 +127,8 @@ class AccountContent extends React.Component {
 const mapStateToProps = state => ({
     ethAccount: getEthAccount(state),
     generatedETHAccount: getGeneratedETHAccount(state),
-    listAccount: listAccountSelector(state)
+    listAccount: listAccountSelector(state),
+    configNetwork: makeSelectConfigNetwork(),
 });
 
 const mapDispatchToProps = (dispatch) => ({

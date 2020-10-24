@@ -15,8 +15,8 @@ import {
   UPDATE_SHIELDING_SUCCESS,
   UPDATE_SHIELDING_FAILURE,
   INSUFFICIENT_BALANCES, SKIP_FORM, TOOL_TIP_HANDLER,
+  UPDATE_VALIDATE_INPUT,
 } from './constants';
-import { CardActions } from '@material-ui/core';
 
 // The initial state of the ShieldingPage
 export const initialState = {
@@ -34,6 +34,7 @@ export const initialState = {
   refresher: null,
   skipForm: null,
   isOpenToolTip: false,
+  validateForm: null,
 };
 
 function updateFormInfo(state, action, fieldName) {
@@ -133,6 +134,11 @@ function shieldingReducer(state = initialState, action) {
       return {
         ...state,
         isOpenToolTip: action.isOpenToolTip,
+      }
+    case UPDATE_VALIDATE_INPUT:
+      return {
+        ...state,
+        validateForm: action.validateForm,
       }
     default:
       return state;

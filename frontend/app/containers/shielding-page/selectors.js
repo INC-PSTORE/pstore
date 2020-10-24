@@ -54,6 +54,12 @@ const makeSelectToolTip = () =>
     shieldingState => shieldingState.isOpenToolTip,
   );
 
+const makeSelectValidateForm = () =>
+  createSelector(
+    selectShielding,
+    shieldingState => shieldingState.validateForm,
+  );
+
 export {
   selectShielding,
   makeSelectFormInfo,
@@ -64,4 +70,5 @@ export {
   makeSelectRefresher,
   makeSelectSkipForm,
   makeSelectToolTip,
+  makeSelectValidateForm,
 };

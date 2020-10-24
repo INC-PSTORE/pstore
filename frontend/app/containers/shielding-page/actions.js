@@ -16,6 +16,7 @@ import {
   UPDATE_SHIELDING_FAILURE,
   INSUFFICIENT_BALANCES,
   SKIP_FORM, TOOL_TIP_HANDLER,
+  UPDATE_VALIDATE_INPUT,
 } from './constants';
 
 export function changeSelectedToken(selectedToken) {
@@ -111,5 +112,12 @@ export function updateToolTip(isOpenToolTip) {
   return {
     type: TOOL_TIP_HANDLER,
     isOpenToolTip,
+  }
+}
+
+export function updateValidateForm(validateForm) {
+  return {
+    type: UPDATE_VALIDATE_INPUT,
+    validateForm,
   }
 }

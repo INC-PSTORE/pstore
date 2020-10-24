@@ -1,5 +1,5 @@
 /**
- * Acconunt selectors
+ * Account selectors
  *
  * Author: incsmile
  */
