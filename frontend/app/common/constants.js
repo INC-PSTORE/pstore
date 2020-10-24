@@ -73,7 +73,7 @@ export const STORAGE_KEY = {
 export const INC_WALLET_BACKUP_PASS = '123';
 export const INC_WALLET_PASSPHRASE = '123';
 
-export const DEFAULT_PRV_FEE = 100;   // in nano PRV
+export const DEFAULT_PRV_FEE = 10000;   // in nano PRV
 
 export const TOKEN_INFO = {
     PRV: {
