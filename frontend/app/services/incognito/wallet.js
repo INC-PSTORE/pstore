@@ -73,7 +73,6 @@ export async function getWallet() {
       // save
       saveWallet(wallet);
     }
-    console.log('wallet', wallet);
   }
 
   return wallet;
@@ -89,8 +88,6 @@ export async function createNewAccount(accountName) {
   if (!wallet) {
     console.error("Wallet is null!!!!");
   }
-
-  console.log({wallet});
 
   let newAccount = await wallet.masterAccount.addAccount(accountName);
   saveWallet(wallet);
@@ -226,7 +223,7 @@ export async function createRawTxForBurningToken(token, externalAddress, burning
 
   try {
     const res = await token.createRawTxForBurningToken(externalAddress, burningAmount, DEFAULT_PRV_FEE, 0);
-
+    console.log({res});
     return res && res.txInfo && res.txInfo.b58CheckEncodeTx;
   } catch (e) {
     console.error("Error when create raw tx" , e);
