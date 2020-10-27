@@ -3,6 +3,7 @@
  */
 
 import { createSelector } from 'reselect';
+import {selectShielding} from "../shielding-page/selectors";
 
 const selectUnshield = state => state.unshield; // 'unshield' here should match to registered reducer name in index.js
 
@@ -42,17 +43,17 @@ const makeSelectValidateForm = () =>
     unshieldState => unshieldState.validateForm,
   );
 
-// const makeSelectTxBurnToUnshield = () =>
-//   createSelector(
-//     selectUnshield,
-//     unshieldState => unshieldState.burnToUnshieldTx,
-//   );
-//
-// const makeSelectProofToUnshield = () =>
-//   createSelector(
-//     selectUnshield,
-//     unshieldState => unshieldState.burnUnshieldProof,
-//   );
+const makeSelectSkipForm = () =>
+  createSelector(
+    selectUnshield,
+    unshieldState => unshieldState.skipForm,
+  );
+
+const makeSelectToolTip = () =>
+  createSelector(
+    selectUnshield,
+    unshieldState => unshieldState.isOpenToolTip,
+  );;
 
 const makeSelectLatestUnsuccessfulUnshield = () =>
   createSelector(
@@ -66,8 +67,8 @@ export {
   makeSelectUnshieldActiveStep,
   makeSelectFormInfo,
   makeSelectFormInfoTokenId,
-  // makeSelectTxBurnToUnshield,
-  // makeSelectProofToUnshield,
+  makeSelectSkipForm,
+  makeSelectToolTip,
   makeSelectETHTxDetail,
   makeSelectLatestUnsuccessfulUnshield,
   makeSelectValidateForm,
