@@ -16,28 +16,54 @@ import {createStructuredSelector} from 'reselect';
 import reducer from './reducer';
 import injectReducer from 'utils/injectReducer';
 import styles from './styles';
-import {changeAmount, changeSelectedToken, changeStep, changeEthAddress, updateValidateForm} from './actions';
+import {
+  changeAmount,
+  changeSelectedToken,
+  changeStep,
+  changeEthAddress,
+  updateValidateForm,
+  updateSkipForm,
+  updateToolTip, getLatestUnsuccessfulUnshieldSuccess, updateEthTxInfo,
+} from './actions';
 import {
   makeSelectLatestUnsuccessfulUnshield,
   makeSelectUnshieldActiveStep,
   makeSelectETHTxDetail,
   makeSelectValidateForm,
-  makeSelectFormInfo
+  makeSelectFormInfo,
+  makeSelectSkipForm,
+  makeSelectToolTip,
 } from './selectors';
 import {
   getLatestUnsuccessfulUnshieldThunk,
   burnToUnshield,
   withdrawThunk,
   refreshUnshieldStepThunk,
-  getUnshieldById
 } from './middlewares';
 import BurnToWithdraw from '../../components/sc-unshielding-step';
 import BurnProofToWithdraw from '../../components/sc-unshielding-submit-proof-step';
 
 import {
+  makeSelectConfigNetwork,
   makeSelectPrivateIncAccount,
 } from '../App/selectors';
 import Snackbar from "@material-ui/core/Snackbar";
+import FormControl from "@material-ui/core/FormControl";
+import InputLabel from "@material-ui/core/InputLabel";
+import OutlinedInput from "@material-ui/core/OutlinedInput";
+import FormHelperText from "@material-ui/core/FormHelperText";
+import {Button} from "@material-ui/core";
+import {
+  ETH_SUBMITING_TX,
+  ETH_WITHDRAW_FAILED,
+  ETH_WITHDRAW_SUCCESS,
+  INC_BURNED_FAILED,
+} from "../../common/constants";
+import Grid from "@material-ui/core/Grid";
+import ClickAwayListener from "@material-ui/core/ClickAwayListener";
+import Tooltip from "@material-ui/core/Tooltip";
+import HelpOutlineIcon from "@material-ui/icons/HelpOutline";
+import {getLocalStorageKeyUnshield} from "../../common/utils";
 
 
 function getUnshieldSteps() {
@@ -50,6 +76,12 @@ export class UnshieldPage extends React.PureComponent {
     super(props);
     this.displayStepContent = this.displayStepContent.bind(this);
     this.handleSnackbarClose = this.handleSnackbarClose.bind(this);
+    this.createNewUnshield = this.createNewUnshield.bind(this);
+    this.handleTooltipOpen = this.handleTooltipOpen.bind(this);
+    this.handleTooltipClose = this.handleTooltipClose.bind(this);
+    this.updateEthDepositTx = this.updateEthDepositTx.bind(this);
+    this.skipStep = this.skipStep.bind(this);
+    this.handleWithdrawInput = this.handleWithdrawInput.bind(this);
   }
 
   displayStepContent(activeStep) {
@@ -60,7 +92,6 @@ export class UnshieldPage extends React.PureComponent {
       onChangeEthAddress,
       onSubmitBurnTx,
       onSignAndSubmitBurnProof,
-      onGetUnshieldById,
       onUpdateValidateForm,
       onRefreshAndGetProof,
       ethTxInfo,
@@ -70,6 +101,7 @@ export class UnshieldPage extends React.PureComponent {
       formInfo,
       formValidate,
       history,
+      configNetwork,
     } = this.props;
 
     switch (activeStep) {
@@ -87,6 +119,7 @@ export class UnshieldPage extends React.PureComponent {
             onChangeEthAddress={onChangeEthAddress}
             onSubmitBurnTx={onSubmitBurnTx}
             onUpdateValidateForm={onUpdateValidateForm}
+            configNetwork={configNetwork}
           />
         );
       default:
@@ -99,11 +132,37 @@ export class UnshieldPage extends React.PureComponent {
             latestUnsuccessfulUnshield={latestUnsuccessfulUnshield}
             onRefreshAndGetProof={onRefreshAndGetProof}
             onSignAndSubmitBurnProof={onSignAndSubmitBurnProof}
-            onGetUnshieldById={onGetUnshieldById}
+            createNewUnshield={this.createNewUnshield}
           />
         );
-      // return null;
     }
+  }
+
+  handleTooltipClose() {
+    const {onUpdateToolTip} = this.props;
+    onUpdateToolTip(false);
+  }
+
+  handleTooltipOpen() {
+    const {onUpdateToolTip} = this.props;
+    onUpdateToolTip(true);
+  }
+
+  createNewUnshield() {
+    const {onCreateNewUnshield} = this.props;
+    onCreateNewUnshield(null);
+    localStorage.removeItem(getLocalStorageKeyUnshield());
+  }
+
+  skipStep() {
+    const {onUpdateSkipForm, skipForm} = this.props;
+    let tempSkipForm;
+    if (!skipForm) {
+      tempSkipForm = {isOpen: true};
+    } else {
+      tempSkipForm = {isOpen: !skipForm.isOpen, message: skipForm.message, ethTxId: skipForm.ethTxId};
+    }
+    onUpdateSkipForm(tempSkipForm);
   }
 
   handleSnackbarClose(event, reason) {
@@ -116,19 +175,46 @@ export class UnshieldPage extends React.PureComponent {
     }
   }
 
+  handleWithdrawInput = e => {
+    const {skipForm, onUpdateSkipForm} = this.props;
+    if (skipForm) {
+      skipForm.ethTxId = e.target.value;
+    }
+    onUpdateSkipForm(skipForm ? skipForm : {ethTxId: e.target.value});
+  }
+
+  updateEthDepositTx() {
+    const {skipForm, onUpdateSkipForm, onCreateNewUnshield, onUpdateEthTxInfo, latestUnsuccessfulUnshield} = this.props;
+    let tempSkipForm;
+    if (skipForm && skipForm.ethTxId && /^0x([A-Fa-f0-9]{64})$/.test(skipForm.ethTxId)) {
+      let newUnshield = latestUnsuccessfulUnshield;
+      newUnshield.ethtx = skipForm.ethTxId;
+      onCreateNewUnshield(newUnshield);
+      localStorage.setItem(getLocalStorageKeyUnshield(), JSON.stringify(newUnshield));
+      onUpdateSkipForm(null);
+      onUpdateEthTxInfo(null);
+    } else {
+      tempSkipForm = {isOpen: true, ethTxId: skipForm ? skipForm.ethTxId : '', message: "Invalid eth transaction"};
+      onUpdateSkipForm(tempSkipForm);
+    }
+  }
+
   componentDidMount() {
     const {
-      privateIncAccount,
       onGetLatestUnsuccessfulUnshielding,
       onChangeAmount,
       onChangeEthAddress,
       onUpdateValidateForm,
+      onUpdateSkipForm,
+      onUpdateEthTxInfo,
     } = this.props;
     // TODO: replace these methods by rpc call to get pToken
     onChangeAmount();
     onChangeEthAddress("");
-    onGetLatestUnsuccessfulUnshielding(privateIncAccount.address);
+    onGetLatestUnsuccessfulUnshielding();
     onUpdateValidateForm(null);
+    onUpdateSkipForm(null);
+    onUpdateEthTxInfo(null);
   }
 
   render() {
@@ -137,19 +223,26 @@ export class UnshieldPage extends React.PureComponent {
       classes,
       activeStep,
       formValidate,
+      latestUnsuccessfulUnshield,
+      ethTxInfo,
+      skipForm,
+      isOpenToolTip,
     } = this.props;
+
+    let helperText = "Update Ethereum tx id if you've updated gas price on metamask";
+    let skipTitle = ">> Update eth withdraw transaction"
+
     return (
       <div className={classes.root}>
         {formValidate && formValidate.snackBar && formValidate.snackBar.isError &&
         <Snackbar
           className={classes.snackBar}
-          // bodyStyle={{ backgroundColor: '#f44336', color: 'white' }}
           ContentProps={{
             className: classes.snackBarContent,
           }}
           open={formValidate.snackBar.isError}
           autoHideDuration={3000}
-          message={formValidate.snackBar.message}
+          message={formValidate && formValidate.snackBar.message ? formValidate.snackBar.message : ""}
           onClose={this.handleSnackbarClose}
           anchorOrigin={{
             vertical: 'top',
@@ -164,7 +257,7 @@ export class UnshieldPage extends React.PureComponent {
           }
         />
         }
-        <Stepper alternativeLabel activeStep={activeStep} className={classes.stepper}>
+        <Stepper alternativeLabel activeStep={latestUnsuccessfulUnshield && latestUnsuccessfulUnshield.status === ETH_WITHDRAW_SUCCESS ? 2 : activeStep} className={classes.stepper}>
           {steps.map((label) => (
             <Step key={label}>
               <StepLabel>{label}</StepLabel>
@@ -172,6 +265,74 @@ export class UnshieldPage extends React.PureComponent {
           ))}
         </Stepper>
         {this.displayStepContent(activeStep)}
+        <div className={classes.ethSkipStepWrapper}>
+          {skipForm && skipForm.isOpen
+            ?
+            <FormControl fullWidth className={classes.ethSkipStep} variant="outlined">
+              <InputLabel htmlFor="outlined-adornment-amount">Inc burn transaction hash</InputLabel>
+              <OutlinedInput
+                error={!!(skipForm && skipForm.message)}
+                id="outlined-adornment-amount"
+                onChange={this.handleWithdrawInput}
+                labelWidth={160}
+              />
+              {skipForm.message &&
+              <FormHelperText id="component-error-text">{skipForm.message}</FormHelperText>
+              }
+              <div className={classes.ethSkipStepButton}>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={this.updateEthDepositTx}
+                  style={{margin: 5}}
+                >Submit</Button>
+                <Button
+                  onClick={this.skipStep}
+                  variant="contained"
+                  style={{margin: 5}}
+                >Cancel</Button>
+              </div>
+            </FormControl>
+            :
+            (latestUnsuccessfulUnshield && ethTxInfo && latestUnsuccessfulUnshield.status === ETH_SUBMITING_TX && (ethTxInfo.status === 2 || !ethTxInfo.status))
+              ?
+              <div className={classes.skipStep}>
+                <a className={classes.skipStepLink} onClick={this.skipStep}> {skipTitle} </a>
+                <Grid item>
+                  <ClickAwayListener onClickAway={this.handleTooltipClose}>
+                    <div>
+                      <Tooltip
+                        PopperProps={{
+                          disablePortal: true,
+                        }}
+                        onClose={this.handleTooltipClose}
+                        open={isOpenToolTip}
+                        disableFocusListener
+                        disableHoverListener
+                        disableTouchListener
+                        title={helperText}
+                        leaveDelay={200}
+                      >
+                        <Button onClick={this.handleTooltipOpen}><HelpOutlineIcon fontSize={'16'}/></Button>
+                      </Tooltip>
+                    </div>
+                  </ClickAwayListener>
+                </Grid>
+              </div>
+              :
+              <></>
+          }
+        </div>
+        {/*in case transaction from eth or inc failed*/}
+        <div>
+          {latestUnsuccessfulUnshield &&
+          (latestUnsuccessfulUnshield.status === INC_BURNED_FAILED ||
+            latestUnsuccessfulUnshield.status === ETH_WITHDRAW_FAILED) &&
+          <Button onClick={this.createNewUnshield}>
+            Create New Unshield
+          </Button>
+          }
+        </div>
       </div>
     );
   }
@@ -183,12 +344,15 @@ export function mapDispatchToProps(dispatch) {
     onChangeAmount: (amountToBurn) => dispatch(changeAmount(amountToBurn)),
     onChangeEthAddress: (ethAddress) => dispatch(changeEthAddress(ethAddress)),
     onChangeStep: (stepNumber) => dispatch(changeStep(stepNumber)),
-    onGetLatestUnsuccessfulUnshielding: (incAddress) => dispatch(getLatestUnsuccessfulUnshieldThunk(incAddress)),
+    onGetLatestUnsuccessfulUnshielding: () => dispatch(getLatestUnsuccessfulUnshieldThunk()),
     onSubmitBurnTx: (formInfo, privateIncAccount) => dispatch(burnToUnshield(formInfo, privateIncAccount)),
     onSignAndSubmitBurnProof: (ethAccount, unshieldObject) => dispatch(withdrawThunk(ethAccount, unshieldObject)),
-    onRefreshAndGetProof: (privateIncAccount) => dispatch(refreshUnshieldStepThunk(privateIncAccount)),
-    onGetUnshieldById: (unshieldId) => dispatch(getUnshieldById(unshieldId)),
+    onRefreshAndGetProof: () => dispatch(refreshUnshieldStepThunk()),
     onUpdateValidateForm: (validateForm) => dispatch(updateValidateForm(validateForm)),
+    onUpdateSkipForm: (skipForm) => dispatch(updateSkipForm(skipForm)),
+    onCreateNewUnshield: (unshield) => dispatch(getLatestUnsuccessfulUnshieldSuccess(unshield)),
+    onUpdateToolTip: (isOpenToolTip) => dispatch(updateToolTip(isOpenToolTip)),
+    onUpdateEthTxInfo: (ethTxInfo) => dispatch(updateEthTxInfo(ethTxInfo)),
   }
 }
 
@@ -199,6 +363,9 @@ const mapStateToProps = createStructuredSelector({
   formInfo: makeSelectFormInfo(),
   latestUnsuccessfulUnshield: makeSelectLatestUnsuccessfulUnshield(),
   formValidate: makeSelectValidateForm(),
+  configNetwork: makeSelectConfigNetwork(),
+  skipForm: makeSelectSkipForm(),
+  isOpenToolTip: makeSelectToolTip(),
 });
 
 const withConnect = connect(

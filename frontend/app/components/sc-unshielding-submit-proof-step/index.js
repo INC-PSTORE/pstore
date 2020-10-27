@@ -27,7 +27,7 @@ import {
   ETH_SUBMITED_TX,
   ETH_WITHDRAW_UNKNOWN,
   ETH_TRANSACTION_RECJECTED,
-  ETH_WITHDRAW_SUCCESS,
+  ETH_WITHDRAW_SUCCESS, INC_BURNED_FAILED, ETH_WITHDRAW_FAILED,
 } from "../../common/constants";
 import {Paper} from '@material-ui/core';
 import CircularProgress from "@material-ui/core/CircularProgress";
@@ -41,7 +41,6 @@ export class BurnProofToWithdraw extends React.PureComponent {
     this.displayForm = this.displayForm.bind(this);
     this.signAndSubmitToUnshield = this.signAndSubmitToUnshield.bind(this);
     this.getProof = this.getProof.bind(this);
-    this.refreshEthState = this.refreshEthState.bind(this);
     this.redirectToAccounts = this.redirectToAccounts.bind(this);
     this.refresh = this.refresh.bind(this);
   }
@@ -52,20 +51,14 @@ export class BurnProofToWithdraw extends React.PureComponent {
   }
 
   getProof() {
-    const {privateIncAccount, onRefreshAndGetProof} = this.props;
-    onRefreshAndGetProof(privateIncAccount);
-  }
-
-  refreshEthState() {
-    const {latestUnsuccessfulUnshield, onGetUnshieldById} = this.props;
-    if (latestUnsuccessfulUnshield && latestUnsuccessfulUnshield.UnshieldId !== '') {
-      onGetUnshieldById(latestUnsuccessfulUnshield.UnshieldId);
-    }
+    const {onRefreshAndGetProof} = this.props;
+    onRefreshAndGetProof();
   }
 
   redirectToAccounts() {
-    const {history} = this.props;
+    const {history, createNewUnshield} = this.props;
     history.push('/wallet');
+    createNewUnshield();
   }
 
   createData(fieldName, value) {
@@ -76,14 +69,13 @@ export class BurnProofToWithdraw extends React.PureComponent {
   componentDidMount() {
     const {latestUnsuccessfulUnshield} = this.props;
     this.getProof();
-    if (!latestUnsuccessfulUnshield || latestUnsuccessfulUnshield.status !== ETH_WITHDRAW_SUCCESS) {
-      refresher = setInterval(this.refresh, 5000); // run every 10s
+    if (latestUnsuccessfulUnshield && [INC_BURN_TO_UNSHIELD_INIT, ETH_SUBMITING_TX].includes(latestUnsuccessfulUnshield.status)) {
+      refresher = setInterval(this.refresh, 15000); // run every 15s
     }
   }
 
   componentWillUnmount() {
     if (refresher) {
-      console.log('clearing interval because of leaving');
       clearInterval(refresher);
     }
     refresher = null;
@@ -91,9 +83,8 @@ export class BurnProofToWithdraw extends React.PureComponent {
 
   componentDidUpdate(prevProps) {
     const {latestUnsuccessfulUnshield} = this.props;
-    if (latestUnsuccessfulUnshield && latestUnsuccessfulUnshield.status === ETH_WITHDRAW_SUCCESS) {
+    if (latestUnsuccessfulUnshield && [ETH_WITHDRAW_SUCCESS, INC_BURNED_FAILED, ETH_WITHDRAW_FAILED].includes(latestUnsuccessfulUnshield.status)) {
       if (refresher) {
-        console.log('clearing interval because of finishing');
         clearInterval(refresher);
       }
       refresher = null;
@@ -102,12 +93,8 @@ export class BurnProofToWithdraw extends React.PureComponent {
 
   refresh() {
     const {latestUnsuccessfulUnshield} = this.props;
-    if (latestUnsuccessfulUnshield) {
-      if (latestUnsuccessfulUnshield.status === INC_BURNED_TO_UNSHIELD) {
-        this.getProof()
-      } else if (latestUnsuccessfulUnshield.status === ETH_SUBMITED_TX) {
-        this.refreshEthState();
-      }
+    if (latestUnsuccessfulUnshield && [INC_BURN_TO_UNSHIELD_INIT, ETH_SUBMITING_TX].includes(latestUnsuccessfulUnshield.status)) {
+      this.getProof();
     }
   }
 
@@ -120,7 +107,7 @@ export class BurnProofToWithdraw extends React.PureComponent {
             className={classes.burnProof}
             id="outlined-read-only-input"
             label="Proof"
-            value={latestUnsuccessfulUnshield.burnToWithdrawProof}
+            value={latestUnsuccessfulUnshield.ethrawinput}
             InputProps={{
               readOnly: true,
             }}
@@ -136,31 +123,17 @@ export class BurnProofToWithdraw extends React.PureComponent {
           </Button>
         </Paper>
       )
-    } else if (latestUnsuccessfulUnshield && latestUnsuccessfulUnshield.status > INC_TRANSACTION_REJECTED) {
+    } else if (latestUnsuccessfulUnshield && latestUnsuccessfulUnshield.status === ETH_WITHDRAW_SUCCESS) {
       return (
         <div>
-          {latestUnsuccessfulUnshield.status === ETH_WITHDRAW_SUCCESS
-            ?
-            <Button
-              className={classes.actionButton}
-              variant="contained"
-              color="primary"
-              onClick={this.redirectToAccounts}
-            >
-              Check Balances
-            </Button>
-            :
-            <div className={classes.refresher}>
-              <CircularProgress
-                variant="indeterminate"
-                disableShrink
-                size={24}
-                thickness={4}
-                className={classes.cirProgress}
-              />
-              <Typography>status updating...</Typography>
-            </div>
-          }
+          <Button
+            className={classes.actionButton}
+            variant="contained"
+            color="primary"
+            onClick={this.redirectToAccounts}
+          >
+            Check Balances
+          </Button>
         </div>
       )
     }
@@ -180,7 +153,7 @@ export class BurnProofToWithdraw extends React.PureComponent {
         case INC_BURNED_NOT_FOUND:
           status = 'Not Found'
           break;
-        case INC_BURNED_FAILURE:
+        case INC_BURNED_FAILED:
           status = 'Failed'
           break;
         case INC_TRANSACTION_REJECTED:
@@ -189,45 +162,27 @@ export class BurnProofToWithdraw extends React.PureComponent {
         default:
           break;
       }
-      let incStatus = 'Succeed';
-      switch (latestUnsuccessfulUnshield.status) {
-        case ETH_SUBMITING_TX:
-          incStatus = 'Submiting'
-          break;
-        case ETH_SUBMITED_TX:
-          incStatus = 'Submitted'
-          break;
-        case INC_BURNED_NOT_FOUND:
-          incStatus = 'Not Found'
-          break;
-        case ETH_WITHDRAW_UNKNOWN:
-          incStatus = 'Unknown'
-          break;
-        case ETH_TRANSACTION_RECJECTED:
-          incStatus = 'Rejected'
-          break;
-        default:
-          break;
-      }
 
       let depProofSubmitStatusRows = [
-        this.createData('TransactionID', latestUnsuccessfulUnshield.burnToWithdrawTxID),
+        this.createData('TransactionID', latestUnsuccessfulUnshield.inctx),
         this.createData('Status', status),
       ];
 
       let withdrawEthStatus = [];
       if (ethTxInfo && latestUnsuccessfulUnshield.status > INC_TRANSACTION_REJECTED) {
         withdrawEthStatus = [
-          this.createData('Transaction hash', ethTxInfo.transactionHash),
-          this.createData('Status', incStatus),
+          this.createData('Transaction hash', ethTxInfo.hash),
+          this.createData('Status', ethTxInfo.status === 2 || ethTxInfo.status === undefined  ? 'Pending' : 1 ? 'Succeeded' : 'Reverted'),
           this.createData('Block', ethTxInfo.blockNumber),
-          this.createData('To', ethTxInfo.toAddressStr),
-          this.createData('Transaction Fee', ethTxInfo.txFee),
+          this.createData('From', ethTxInfo.from),
+          this.createData('To', ethTxInfo.to),
+          this.createData('Value', ethTxInfo.value / 1e18 + ' ETH'),
+          this.createData('Transaction Gas', ethTxInfo.gas),
         ]
       }
 
       let disableGetProof = false;
-      if (latestUnsuccessfulUnshield.status !== INC_BURNED_TO_UNSHIELD) {
+      if ([INC_BURNED_SUCCESS, INC_BURNED_FAILED, ETH_WITHDRAW_FAILED, ETH_WITHDRAW_SUCCESS].includes(latestUnsuccessfulUnshield.status)) {
         disableGetProof = true;
       }
       return (
@@ -252,19 +207,6 @@ export class BurnProofToWithdraw extends React.PureComponent {
                 </Table>
               </ExpansionPanelDetails>
             </ExpansionPanel>
-
-            {!disableGetProof &&
-            <div className={classes.refresher}>
-              <CircularProgress
-                variant="indeterminate"
-                disableShrink
-                size={24}
-                thickness={4}
-                className={classes.cirProgress}
-              />
-              <Typography>status updating...</Typography>
-            </div>
-            }
           </div>
 
           {ethTxInfo &&
@@ -288,6 +230,18 @@ export class BurnProofToWithdraw extends React.PureComponent {
                 </Table>
               </ExpansionPanelDetails>
             </ExpansionPanel>
+          </div>
+          }
+          {!disableGetProof &&
+          <div className={classes.refresher}>
+            <CircularProgress
+              variant="indeterminate"
+              disableShrink
+              size={24}
+              thickness={4}
+              className={classes.cirProgress}
+            />
+            <Typography>status updating...</Typography>
           </div>
           }
           {this.displayForm()}

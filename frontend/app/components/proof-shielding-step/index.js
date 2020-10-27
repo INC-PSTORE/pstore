@@ -42,7 +42,7 @@ export class ShieldingProof extends React.PureComponent {
     onRefreshShieldingProofStep(ethAccount);
 
     if (!latestUnsuccessfulShielding || [ETH_DEPOSITING_TO_INC_CONTRACT, SHIELDING_PROOF_SUBMITTING, ETH_DEPOSITED_TO_INC_CONTRACT].includes(latestUnsuccessfulShielding.status)) {
-      refresher = setInterval(this.refresh, 10000); // run every 10s
+      refresher = setInterval(this.refresh, 15000); // run every 15s
     }
   }
 

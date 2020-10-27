@@ -35,6 +35,7 @@ import BurnToDeploy from '../../components/sc-deploy-step';
 import BurnProofToDeploy from '../../components/sc-deploy-submit-proof-step';
 
 import {
+  makeSelectConfigNetwork,
   makeSelectPrivateIncAccount,
 } from '../App/selectors';
 import Snackbar from "@material-ui/core/Snackbar";
@@ -69,6 +70,7 @@ export class DeployPage extends React.PureComponent {
       formInfo,
       formValidate,
       history,
+      configNetwork,
     } = this.props;
 
     switch (activeStep) {
@@ -84,6 +86,7 @@ export class DeployPage extends React.PureComponent {
             onChangeStep={onChangeStep}
             onSubmitBurnTx={onSubmitBurnTx}
             onUpdateValidateForm={onUpdateValidateForm}
+            configNetwork={configNetwork}
           />
         );
       default:
@@ -193,6 +196,7 @@ const mapStateToProps = createStructuredSelector({
   formInfo: makeSelectFormInfo(),
   latestUnsuccessfulDeploy: makeSelectLatestUnsuccessfulDeploy(),
   formValidate: makeSelectValidateForm(),
+  configNetwork: makeSelectConfigNetwork(),
 });
 
 const withConnect = connect(

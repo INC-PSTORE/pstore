@@ -30,7 +30,7 @@ import SmartContractDeposit from '../../components/sc-deposit-shielding-step';
 import {
   makeSelectPrivateIncAccount,
   makeSelectTempIncAccount,
-  makeSelectGeneratedETHAccFromIncAcc,
+  makeSelectGeneratedETHAccFromIncAcc, makeSelectConfigNetwork,
 } from '../App/selectors';
 
 import { changeAmount, changeSelectedToken } from './actions';
@@ -93,8 +93,8 @@ export class UndeployPage extends React.PureComponent {
   }
 
   changeSelectedToken(extTokenId) {
-    const { onChangeSelectedToken } = this.props;
-    let supportedTokens = getDefaultSupportedTokens();
+    const { onChangeSelectedToken, configNetwork } = this.props;
+    let supportedTokens = getDefaultSupportedTokens(configNetwork.isMainnet);
     supportedTokens.shift();
     let selectedToken = {};
     for (const supportedToken of supportedTokens) {
@@ -117,6 +117,7 @@ export class UndeployPage extends React.PureComponent {
       ethTxInfo,
       insufficientBalancesInfo,
       onRefreshUndeployProofStep,
+      configNetwork,
     } = this.props;
     const scUndeployComp = (
       <SmartContractDeposit
@@ -129,6 +130,7 @@ export class UndeployPage extends React.PureComponent {
         onDeposit={this.undeploy}
         onChangeSelectedToken={this.changeSelectedToken}
         onChangeAmount={onChangeAmount}
+        configNetwork={configNetwork}
       />
     );
     const undeployProofComp = (
@@ -203,6 +205,7 @@ const mapStateToProps = createStructuredSelector({
   latestUnsuccessfulUndeploy: makeSelectLatestUnsuccessfulUndeploy(),
   ethTxInfo: makeSelectETHTxInfo(),
   insufficientBalancesInfo :makeSelectInsufficientBalancesInfo(),
+  configNetwork: makeSelectConfigNetwork(),
 });
 
 const withConnect = connect(

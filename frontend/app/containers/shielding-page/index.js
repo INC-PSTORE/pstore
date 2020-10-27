@@ -26,7 +26,7 @@ import {
   ETH_DEPOSIT_FAILED,
   SHIELDING_PROOF_SUBMITTED,
   SHIELDING_PROOF_SUBMITTING,
-  SHIELDING_PROOF_SUBMIT_REJECTED,
+  SHIELDING_PROOF_SUBMIT_REJECTED, INC_TRANSACTION_REJECTED,
 } from '../../common/constants';
 
 import {getDefaultSupportedTokens, getLocalStorageKey} from '../../common/utils';
@@ -281,7 +281,7 @@ export class ShieldingPage extends React.PureComponent {
           }
         />
         }
-        <Stepper alternativeLabel activeStep={step} className={classes.stepper}>
+        <Stepper alternativeLabel activeStep={latestUnsuccessfulShielding && latestUnsuccessfulShielding.status === SHIELDING_PROOF_SUBMITTED ? 2 : step} className={classes.stepper}>
           {steps.map((label) => (
             <Step key={label}>
               <StepLabel>{label}</StepLabel>
@@ -318,7 +318,7 @@ export class ShieldingPage extends React.PureComponent {
               </div>
             </FormControl>
             :
-            (!latestUnsuccessfulShielding || !ethTxInfo || (latestUnsuccessfulShielding.status === ETH_DEPOSITING_TO_INC_CONTRACT && ethTxInfo.status === 2))
+            (!latestUnsuccessfulShielding || [SHIELDING_PROOF_SUBMIT_REJECTED, ETH_DEPOSIT_FAILED].includes(latestUnsuccessfulShielding.status) || !ethTxInfo || (latestUnsuccessfulShielding.status === ETH_DEPOSITING_TO_INC_CONTRACT && ethTxInfo.status === 2))
               ?
               <div className={classes.skipStep}>
               <a className={classes.skipStepLink} onClick={this.skipStep}> {message} </a> <Grid item>
