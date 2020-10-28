@@ -168,6 +168,16 @@ function getDefaultSupportedTokens(isMainnet) {
   ];
 }
 
+// Will remove this list when submit deposit proof raw tx available
+function getWalletList() {
+  return [
+    process.env.WALLET_1, // 12S2Wb5zoKjAsecY4aBTfnA3C3Z89D2JwdhctVgCNYPprFntiGXEHrEw9if7p86qKbXS4cQb2tWiSwzg3pNmk9TZn4vXnsYNRSAqo1A
+    process.env.WALLET_2, // 12S3qvLtS9Y673dLsyLmFmctraZyJxgDLTx88WRUev819dmo7BAYAi6g8N8UGU6G4b45gSvjrohkMChJshYV9DaGRN5XTuS3mNMutza
+    process.env.WALLET_3, // 12RzxGz5wQ6YivVgxQq73EVpbYYJpQNvkJ9zG4EkH7Cbm3QUDqkqhPEwzeUdMcoL2vBveBxicXfSYVDz7otW1U29CXsLK25rbkz6s2Q
+    process.env.WALLET_4, // 12S6rMj2Av9ybB7mQYiiqYk1kschxrT7Kj7Ps84Ktz1fuptju37p2ZCGqE9j4Qs3eYufW3GJCF97zBFa9NqeRCQzAb2uMFYvoHzfgai
+  ];
+}
+
 function uuidV4() {
   return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, c =>
     (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
@@ -227,4 +237,5 @@ export {
   filterByExtToken,
   getLocalStorageKey,
   getLocalStorageKeyUnshield,
+  getWalletList,
 };

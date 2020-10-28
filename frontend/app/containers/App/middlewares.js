@@ -19,13 +19,17 @@ export function loadAccountsThunk(isMainnet, reloadBalances) {
     try {
       // load ETH private key
       // const ethAccount = loadETHAccountFromStorage();
-      const metaMask = await enableMetaMask(dispatch);
+      const metaMask = await enableMetaMask(isMainnet);
       dispatch(updateMetaMask(metaMask));
       if(metaMask.isMetaMaskEnabled) {
         window.ethereum.on('chainChanged', (chainId) => {
           metaMask.chainId = chainId;
-          if (chainId !== "0x2a") {
-            metaMask.metaMaskRequiredMess = "Only Kovan supported on PSTORE!";
+          if (chainId !== "0x2a" && chainId !== "0x1") {
+            metaMask.metaMaskRequiredMess = "Only Mainnet and Kovan supported on PSTORE!";
+          } else if (isMainnet && chainId !== "0x1") {
+            metaMask.metaMaskRequiredMess = "Switch metamask network to mainnet please";
+          } else if (!isMainnet && chainId !== "0x2a") {
+            metaMask.metaMaskRequiredMess = "Switch metamask network to kovan please";
           }
           if(metaMask.isMetaMaskEnabled) {
             dispatch(updateMetaMask(metaMask));
@@ -58,7 +62,7 @@ export function loadAccountsThunk(isMainnet, reloadBalances) {
   };
 }
 
-export async function enableMetaMask() {
+export async function enableMetaMask(isMainnet) {
   let isMetaMaskEnabled = false;
   let metaMaskRequiredMess = null;
   let metaMaskAccounts = null;
@@ -73,8 +77,12 @@ export async function enableMetaMask() {
       isMetaMaskEnabled = true;
       metaMaskAccounts = accounts;
       chainId = window.ethereum.chainId;
-      if (chainId !== "0x2a") {
-        metaMaskRequiredMess = "Only Kovan testnet supported on pstore!";
+      if (chainId !== "0x2a" && chainId !== "0x1") {
+        metaMaskRequiredMess = "Only Mainnet and Kovan supported on PSTORE!";
+      } else if (isMainnet && chainId !== "0x1") {
+        metaMaskRequiredMess = "Switch metamask network to mainnet please";
+      } else if (!isMainnet && chainId !== "0x2a") {
+        metaMaskRequiredMess = "Switch metamask network to kovan please";
       }
     } catch (error) {
       metaMaskRequiredMess = "App error can not connect to metamask. Please try again";
