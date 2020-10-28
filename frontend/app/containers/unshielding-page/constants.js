@@ -17,3 +17,8 @@ export const UPDATE_ETH_TX_INFO = 'pstuff/unshield/UPDATE_ETH_TX_INFO';
 export const UPDATE_INC_TX_INFO = 'pstuff/unshield/UPDATE_INC_TX_INFO';
 export const UPDATE_VALIDATE_INPUT = 'pstuff/unshield/UPDATE_VALIDATE_INPUT';
 export const DO_NOTHING = 'pstuff/unshield/DO_NOTHING';
+
+export const MAINNET_UNSHIELD_LOCAL_STORAGE = 'pstuff/unshield/MAINNET_UNSHIELD_LOCAL_STORAGE';
+export const TESTNET_UNSHIELD_LOCAL_STORAGE = 'pstuff/unshield/TESTNET_UNSHIELD_LOCAL_STORAGE';
+export const SKIP_FORM = 'pstuff/unshieldPage/SKIP_FORM';
+export const TOOL_TIP_HANDLER = 'pstuff/unshieldPage/TOOL_TIP_HANDLER';
