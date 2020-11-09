@@ -16,13 +16,15 @@ import {createStructuredSelector} from 'reselect';
 import reducer from './reducer';
 import injectReducer from 'utils/injectReducer';
 import styles from './styles';
-import {changeAmount, changeSelectedToken, changeStep, updateValidateForm} from './actions';
+import {changeAmount, changeSelectedToken, changeStep, updateValidateForm, updateEthTxInfo, updateToolTip, getLatestUnsuccessfulDeploySuccess} from './actions';
 import {
   makeSelectLatestUnsuccessfulDeploy,
   makeSelectDeployActiveStep,
   makeSelectETHTxDetail,
   makeSelectValidateForm,
-  makeSelectFormInfo
+  makeSelectFormInfo,
+  makeSelectToolTip,
+  makeSelectSkipForm,
 } from './selectors';
 import {
   getLatestUnsuccessfulDeployThunk,
@@ -39,7 +41,17 @@ import {
   makeSelectPrivateIncAccount,
 } from '../App/selectors';
 import Snackbar from "@material-ui/core/Snackbar";
-
+import FormControl from "@material-ui/core/FormControl";
+import InputLabel from "@material-ui/core/InputLabel";
+import OutlinedInput from "@material-ui/core/OutlinedInput";
+import FormHelperText from "@material-ui/core/FormHelperText";
+import {Button} from "@material-ui/core";
+import {ETH_SUBMITING_TX, ETH_WITHDRAW_FAILED, INC_BURNED_FAILED} from "../../common/constants";
+import Grid from "@material-ui/core/Grid";
+import ClickAwayListener from "@material-ui/core/ClickAwayListener";
+import Tooltip from "@material-ui/core/Tooltip";
+import HelpOutlineIcon from "@material-ui/icons/HelpOutline";
+import {getLocalStorageKeyDeploy} from "../../common/utils";
 
 function getDeploySteps() {
   return ['Burn pToken to deposit to pApps', 'Get & submit proof'];
@@ -51,6 +63,12 @@ export class DeployPage extends React.PureComponent {
     super(props);
     this.displayStepContent = this.displayStepContent.bind(this);
     this.handleSnackbarClose = this.handleSnackbarClose.bind(this);
+    this.handleWithdrawInput = this.handleWithdrawInput.bind(this);
+    this.updateEthDepositTx = this.updateEthDepositTx.bind(this);
+    this.handleTooltipClose = this.handleTooltipClose.bind(this);
+    this.handleTooltipOpen = this.handleTooltipOpen.bind(this);
+    this.createNewDeploy = this.createNewDeploy.bind(this);
+    this.skipStep = this.skipStep.bind(this);
   }
 
   displayStepContent(activeStep) {
@@ -100,9 +118,9 @@ export class DeployPage extends React.PureComponent {
             onRefreshAndGetProof={onRefreshAndGetProof}
             onSignAndSubmitBurnProof={onSignAndSubmitBurnProof}
             onGetDeployById={onGetDeployById}
+            createNewDeploy={this.createNewDeploy}
           />
         );
-      // return null;
     }
   }
 
@@ -118,15 +136,67 @@ export class DeployPage extends React.PureComponent {
 
   componentDidMount() {
     const {
-      privateIncAccount,
       onGetLatestUnsuccessfulDeploy,
       onChangeAmount,
       onUpdateValidateForm,
+      onUpdateEthTxInfo,
     } = this.props;
     // TODO: replace these methods by rpc call to get pToken
     onChangeAmount();
-    onGetLatestUnsuccessfulDeploy(privateIncAccount.address);
+    onGetLatestUnsuccessfulDeploy();
     onUpdateValidateForm(null);
+    onUpdateEthTxInfo(null);
+  }
+
+  handleWithdrawInput = e => {
+    const {skipForm, onUpdateSkipForm} = this.props;
+    if (skipForm) {
+      skipForm.ethTxId = e.target.value;
+    }
+    onUpdateSkipForm(skipForm ? skipForm : {ethTxId: e.target.value});
+  }
+
+  updateEthDepositTx() {
+    const {skipForm, onUpdateSkipForm, onCreateNewDeploy, onUpdateEthTxInfo, latestUnsuccessfulDeploy} = this.props;
+    let tempSkipForm;
+    if (skipForm && skipForm.ethTxId && /^0x([A-Fa-f0-9]{64})$/.test(skipForm.ethTxId)) {
+      let newDeploy = latestUnsuccessfulDeploy;
+      newDeploy.ethtx = skipForm.ethTxId;
+      onCreateNewDeploy(newDeploy);
+      localStorage.setItem(getLocalStorageKeyDeploy(), JSON.stringify(newDeploy));
+      onUpdateSkipForm(null);
+      onUpdateEthTxInfo(null);
+    } else {
+      tempSkipForm = {isOpen: true, ethTxId: skipForm ? skipForm.ethTxId : '', message: "Invalid eth transaction"};
+      onUpdateSkipForm(tempSkipForm);
+    }
+  }
+
+  handleTooltipClose() {
+    const {onUpdateToolTip} = this.props;
+    onUpdateToolTip(false);
+  }
+
+  handleTooltipOpen() {
+    const {onUpdateToolTip} = this.props;
+    onUpdateToolTip(true);
+  }
+
+  createNewDeploy() {
+    const {onCreateNewDeploy} = this.props;
+    onCreateNewDeploy(null);
+    localStorage.removeItem(getLocalStorageKeyDeploy());
+  }
+
+  skipStep() {
+    const {onUpdateSkipForm, skipForm} = this.props;
+    let tempSkipForm;
+    if (!skipForm) {
+      tempSkipForm = {isOpen: true};
+    } else {
+      tempSkipForm = {isOpen: !skipForm.isOpen, message: skipForm.message, ethTxId: skipForm.ethTxId};
+    }
+    onUpdateSkipForm(tempSkipForm);
   }
 
   render() {
@@ -135,7 +205,15 @@ export class DeployPage extends React.PureComponent {
       classes,
       activeStep,
       formValidate,
+      latestUnsuccessfulDeploy,
+      skipForm,
+      isOpenToolTip,
+      ethTxInfo,
     } = this.props;
+
+    let helperText = "Update Ethereum tx id if you've updated gas price on metamask";
+    let skipTitle = ">> Update eth deposit to dapps transaction"
+
     return (
       <div className={classes.root}>
         {formValidate && formValidate.snackBar && formValidate.snackBar.isError &&
@@ -170,6 +248,74 @@ export class DeployPage extends React.PureComponent {
           ))}
         </Stepper>
         {this.displayStepContent(activeStep)}
+        <div className={classes.ethSkipStepWrapper}>
+          {skipForm && skipForm.isOpen
+            ?
+            <FormControl fullWidth className={classes.ethSkipStep} variant="outlined">
+              <InputLabel htmlFor="outlined-adornment-amount">Inc burn transaction hash</InputLabel>
+              <OutlinedInput
+                error={!!(skipForm && skipForm.message)}
+                id="outlined-adornment-amount"
+                onChange={this.handleWithdrawInput}
+                labelWidth={160}
+              />
+              {skipForm.message &&
+              <FormHelperText id="component-error-text">{skipForm.message}</FormHelperText>
+              }
+              <div className={classes.ethSkipStepButton}>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={this.updateEthDepositTx}
+                  style={{margin: 5}}
+                >Submit</Button>
+                <Button
+                  onClick={this.skipStep}
+                  variant="contained"
+                  style={{margin: 5}}
+                >Cancel</Button>
+              </div>
+            </FormControl>
+            :
+            (latestUnsuccessfulDeploy && ethTxInfo && latestUnsuccessfulDeploy.status === ETH_SUBMITING_TX && (ethTxInfo.status === 2 || !ethTxInfo.status))
+              ?
+              <div className={classes.skipStep}>
+                <a className={classes.skipStepLink} onClick={this.skipStep}> {skipTitle} </a>
+                <Grid item>
+                  <ClickAwayListener onClickAway={this.handleTooltipClose}>
+                    <div>
+                      <Tooltip
+                        PopperProps={{
+                          disablePortal: true,
+                        }}
+                        onClose={this.handleTooltipClose}
+                        open={isOpenToolTip}
+                        disableFocusListener
+                        disableHoverListener
+                        disableTouchListener
+                        title={helperText}
+                        leaveDelay={200}
+                      >
+                        <Button onClick={this.handleTooltipOpen}><HelpOutlineIcon fontSize={'16'}/></Button>
+                      </Tooltip>
+                    </div>
+                  </ClickAwayListener>
+                </Grid>
+              </div>
+              :
+              <></>
+          }
+        </div>
+        {/*in case transaction from eth or inc failed*/}
+        <div>
+          {latestUnsuccessfulDeploy &&
+          (latestUnsuccessfulDeploy.status === INC_BURNED_FAILED ||
+            latestUnsuccessfulDeploy.status === ETH_WITHDRAW_FAILED) &&
+          <Button onClick={this.createNewDeploy}>
+            Create New Deploy
+          </Button>
+          }
+        </div>
       </div>
     );
   }
@@ -180,12 +326,15 @@ export function mapDispatchToProps(dispatch) {
     onChangeSelectedToken: (selectedTokenId) => dispatch(changeSelectedToken(selectedTokenId)),
     onChangeAmount: (amountToBurn) => dispatch(changeAmount(amountToBurn)),
     onChangeStep: (stepNumber) => dispatch(changeStep(stepNumber)),
-    onGetLatestUnsuccessfulDeploy: (incAddress) => dispatch(getLatestUnsuccessfulDeployThunk(incAddress)),
+    onGetLatestUnsuccessfulDeploy: () => dispatch(getLatestUnsuccessfulDeployThunk()),
     onSubmitBurnTx: (formInfo, privateIncAccount) => dispatch(burnToDeploy(formInfo, privateIncAccount)),
     onSignAndSubmitBurnProof: (ethAccount, deployObject) => dispatch(submitDeployToSC(ethAccount, deployObject)),
-    onRefreshAndGetProof: (privateIncAccount) => dispatch(refreshDeployStepThunk(privateIncAccount)),
+    onRefreshAndGetProof: () => dispatch(refreshDeployStepThunk()),
     onGetDeployById: (deployId) => dispatch(getDeployById(deployId)),
     onUpdateValidateForm: (validateForm) => dispatch(updateValidateForm(validateForm)),
+    onCreateNewDeploy: (deploy) => dispatch(getLatestUnsuccessfulDeploySuccess(deploy)),
+    onUpdateToolTip: (isOpenToolTip) => dispatch(updateToolTip(isOpenToolTip)),
+    onUpdateEthTxInfo: (ethTxInfo) => dispatch(updateEthTxInfo(ethTxInfo)),
   }
 }
 
@@ -197,6 +346,8 @@ const mapStateToProps = createStructuredSelector({
   latestUnsuccessfulDeploy: makeSelectLatestUnsuccessfulDeploy(),
   formValidate: makeSelectValidateForm(),
   configNetwork: makeSelectConfigNetwork(),
+  skipForm: makeSelectSkipForm(),
+  isOpenToolTip: makeSelectToolTip(),
 });
 
 const withConnect = connect(

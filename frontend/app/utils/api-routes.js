@@ -17,6 +17,10 @@ export function getPrepareBurnProof() {
   return `${buildApiServer()}/execution/inc-proof/prepare`;
 }
 
+export function getPrepareBurnToDepositProof() {
+  return `${buildApiServer()}/execution/inc-deposit-proof/prepare`;
+}
+
 export function getUpdateShieldingApiRoute(shieldingId) {
   return `${buildApiServer()}/shieldings/${shieldingId}`;
 }

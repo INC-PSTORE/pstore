@@ -223,7 +223,7 @@ export async function createRawTxForBurningToken(token, externalAddress, burning
 
   try {
     const res = await token.createRawTxForBurningToken(externalAddress, burningAmount, DEFAULT_PRV_FEE, 0);
-    console.log({res});
+
     return res && res.txInfo && res.txInfo.b58CheckEncodeTx;
   } catch (e) {
     console.error("Error when create raw tx" , e);

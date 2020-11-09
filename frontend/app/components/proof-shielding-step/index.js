@@ -42,7 +42,7 @@ export class ShieldingProof extends React.PureComponent {
     onRefreshShieldingProofStep(ethAccount);
 
     if (!latestUnsuccessfulShielding || [ETH_DEPOSITING_TO_INC_CONTRACT, SHIELDING_PROOF_SUBMITTING, ETH_DEPOSITED_TO_INC_CONTRACT].includes(latestUnsuccessfulShielding.status)) {
-      refresher = setInterval(this.refresh, 15000); // run every 15s
+      refresher = setInterval(this.refresh, 30000); // run every 30s
     }
   }
 
@@ -84,7 +84,7 @@ export class ShieldingProof extends React.PureComponent {
     if (ethTxInfo) {
       ethTxInfoRows = [
         this.createData('Transaction hash', ethTxInfo.hash),
-        this.createData('Status', ethTxInfo.status === 2 || ethTxInfo.status === undefined ? 'Pending' : 1 ? 'Succeeded' : 'Reverted'),
+        this.createData('Status', ethTxInfo.status === 2 || ethTxInfo.status === undefined ? 'Pending' : 1 ? 'Success' : 'Reverted'),
         this.createData('Block', ethTxInfo.blockNumber),
         this.createData('From', ethTxInfo.from),
         this.createData('To', ethTxInfo.to),
@@ -99,7 +99,7 @@ export class ShieldingProof extends React.PureComponent {
         status = 'Processing'
         break;
       case SHIELDING_PROOF_SUBMITTED:
-        status = 'Succeeded'
+        status = 'Success'
         break;
       case SHIELDING_PROOF_SUBMIT_REJECTED:
         status = 'Rejected'
@@ -110,6 +110,7 @@ export class ShieldingProof extends React.PureComponent {
     let depProofSubmitStatusRows = [
       this.createData('Status', status),
     ];
+    let confirmations = latestUnsuccessfulShielding && latestUnsuccessfulShielding.confirmations ? latestUnsuccessfulShielding.confirmations : 0;
 
     return (
       <div className={classes.root}>
@@ -166,6 +167,9 @@ export class ShieldingProof extends React.PureComponent {
               className={classes.cirProgress}
             />
             <Typography>status updating...</Typography>
+            {ethTxInfo && ethTxInfo.status === 1 && latestUnsuccessfulShielding && latestUnsuccessfulShielding.status === ETH_DEPOSITING_TO_INC_CONTRACT &&
+            <Typography>Waiting 15 block confirmations from ethereum ({confirmations}/15)</Typography>
+            }
           </div>
         }
         <div className={classes.buttons}>

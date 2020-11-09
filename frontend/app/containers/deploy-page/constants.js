@@ -15,3 +15,8 @@ export const UPDATE_ETH_TX_INFO = 'pstuff/deploy/UPDATE_ETH_TX_INFO';
 export const UPDATE_INC_TX_INFO = 'pstuff/deploy/UPDATE_INC_TX_INFO';
 export const UPDATE_VALIDATE_INPUT = 'pstuff/deploy/UPDATE_VALIDATE_INPUT';
 export const DO_NOTHING = 'pstuff/deploy/DO_NOTHING';
+
+export const MAINNET_DEPLOY_LOCAL_STORAGE = 'pstuff/deploy/MAINNET_DEPLOY_LOCAL_STORAGE';
+export const TESTNET_DEPLOY_LOCAL_STORAGE = 'pstuff/deploy/TESTNET_DEPLOY_LOCAL_STORAGE';
+export const SKIP_FORM = 'pstuff/deploy/SKIP_FORM';
+export const TOOL_TIP_HANDLER = 'pstuff/deploy/TOOL_TIP_HANDLER';

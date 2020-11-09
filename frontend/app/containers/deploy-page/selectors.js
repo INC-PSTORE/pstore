@@ -42,33 +42,31 @@ const makeSelectValidateForm = () =>
     deployState => deployState.validateForm,
   );
 
-// const makeSelectTxBurnTodeploy = () =>
-//   createSelector(
-//     selectdeploy,
-//     deployState => deployState.burnTodeployTx,
-//   );
-//
-// const makeSelectProofTodeploy = () =>
-//   createSelector(
-//     selectdeploy,
-//     deployState => deployState.burndeployProof,
-//   );
-
 const makeSelectLatestUnsuccessfulDeploy = () =>
   createSelector(
     selectdeploy,
     deployState => deployState.latestUnsuccessfulDeploy,
   );
 
+const makeSelectSkipForm = () =>
+  createSelector(
+    selectdeploy,
+    deployState => deployState.skipForm,
+  );
 
+const makeSelectToolTip = () =>
+  createSelector(
+    selectdeploy,
+    deployState => deployState.isOpenToolTip,
+  );
 
 export {
   makeSelectDeployActiveStep,
   makeSelectFormInfo,
   makeSelectFormInfoTokenId,
-  // makeSelectTxBurnTodeploy,
-  // makeSelectProofTodeploy,
   makeSelectETHTxDetail,
   makeSelectLatestUnsuccessfulDeploy,
   makeSelectValidateForm,
+  makeSelectSkipForm,
+  makeSelectToolTip,
 };

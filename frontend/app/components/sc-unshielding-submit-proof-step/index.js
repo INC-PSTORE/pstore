@@ -40,7 +40,6 @@ export class BurnProofToWithdraw extends React.PureComponent {
     super(props);
     this.displayForm = this.displayForm.bind(this);
     this.signAndSubmitToUnshield = this.signAndSubmitToUnshield.bind(this);
-    this.getProof = this.getProof.bind(this);
     this.redirectToAccounts = this.redirectToAccounts.bind(this);
     this.refresh = this.refresh.bind(this);
   }
@@ -48,11 +47,6 @@ export class BurnProofToWithdraw extends React.PureComponent {
   signAndSubmitToUnshield() {
     const {latestUnsuccessfulUnshield, onSignAndSubmitBurnProof, ethAccount} = this.props;
     onSignAndSubmitBurnProof(ethAccount, latestUnsuccessfulUnshield);
-  }
-
-  getProof() {
-    const {onRefreshAndGetProof} = this.props;
-    onRefreshAndGetProof();
   }
 
   redirectToAccounts() {
@@ -67,10 +61,10 @@ export class BurnProofToWithdraw extends React.PureComponent {
   }
 
   componentDidMount() {
-    const {latestUnsuccessfulUnshield} = this.props;
-    this.getProof();
+    const {latestUnsuccessfulUnshield, onRefreshAndGetProof} = this.props;
+    onRefreshAndGetProof();
     if (latestUnsuccessfulUnshield && [INC_BURN_TO_UNSHIELD_INIT, ETH_SUBMITING_TX].includes(latestUnsuccessfulUnshield.status)) {
-      refresher = setInterval(this.refresh, 15000); // run every 15s
+      refresher = setInterval(this.refresh, 30000); // run every 30s
     }
   }
 
@@ -92,9 +86,9 @@ export class BurnProofToWithdraw extends React.PureComponent {
   }
 
   refresh() {
-    const {latestUnsuccessfulUnshield} = this.props;
+    const {latestUnsuccessfulUnshield, onRefreshAndGetProof} = this.props;
     if (latestUnsuccessfulUnshield && [INC_BURN_TO_UNSHIELD_INIT, ETH_SUBMITING_TX].includes(latestUnsuccessfulUnshield.status)) {
-      this.getProof();
+      onRefreshAndGetProof();
     }
   }
 
@@ -142,7 +136,7 @@ export class BurnProofToWithdraw extends React.PureComponent {
   render() {
     const {classes, latestUnsuccessfulUnshield, ethTxInfo} = this.props;
     if (latestUnsuccessfulUnshield) {
-      let status = 'Succeed';
+      let status = 'Success';
       switch (latestUnsuccessfulUnshield.status) {
         case INC_BURN_TO_UNSHIELD_INIT:
           status = 'Submiting'
@@ -172,7 +166,7 @@ export class BurnProofToWithdraw extends React.PureComponent {
       if (ethTxInfo && latestUnsuccessfulUnshield.status > INC_TRANSACTION_REJECTED) {
         withdrawEthStatus = [
           this.createData('Transaction hash', ethTxInfo.hash),
-          this.createData('Status', ethTxInfo.status === 2 || ethTxInfo.status === undefined  ? 'Pending' : 1 ? 'Succeeded' : 'Reverted'),
+          this.createData('Status', ethTxInfo.status === 2 || ethTxInfo.status === undefined  ? 'Pending' : 1 ? 'Success' : 'Reverted'),
           this.createData('Block', ethTxInfo.blockNumber),
           this.createData('From', ethTxInfo.from),
           this.createData('To', ethTxInfo.to),

@@ -3,7 +3,7 @@ Privacy hub for dapp. Building a super app that protects human's privacy right i
 
 ## Frontend
 ### Development
-> npm start
+> npm run start:local:testnet
 
 ### Production
 > npm start:production1

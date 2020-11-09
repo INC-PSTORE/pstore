@@ -9,9 +9,10 @@ import {
   GET_LATEST_UNSUCCESSFUL_DEPLOY_SUCCESS,
   GET_LATEST_UNSUCCESSFUL_DEPLOY_FAILURE,
   REFRESH_DEPLOY_FAILURE,
-  UPDATE_INC_TX_INFO,
   UPDATE_ETH_TX_INFO,
   UPDATE_VALIDATE_INPUT,
+  SKIP_FORM,
+  TOOL_TIP_HANDLER,
 } from './constants';
 
 // using name as key temporary
@@ -74,5 +75,19 @@ export function updateValidateForm(validateForm) {
   return {
     type: UPDATE_VALIDATE_INPUT,
     validateForm,
+  }
+}
+
+export function updateSkipForm(skipForm) {
+  return {
+    type: SKIP_FORM,
+    skipForm,
+  }
+}
+
+export function updateToolTip(isOpenToolTip) {
+  return {
+    type: TOOL_TIP_HANDLER,
+    isOpenToolTip,
   }
 }

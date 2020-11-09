@@ -53,7 +53,7 @@ export const ETH_TRANSACTION_RECJECTED = 16
 export const INC_BURN_TO_DEPLOY_INIT = 1
 export const INC_BURNED_TO_DEPLOY = 2
 export const ETH_DEPLOY_SUCCESS = 10
-export const ETH_DEPLOY_FAILURE = 11
+export const ETH_DEPLOY_FAILED = 11
 export const ETH_DEPLOY_UNKNOWN = 15
 
 // Undeploy statuses

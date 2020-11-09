@@ -11,6 +11,8 @@ import {
   UPDATE_INC_TX_INFO,
   UPDATE_ETH_TX_INFO,
   UPDATE_VALIDATE_INPUT,
+  SKIP_FORM,
+  TOOL_TIP_HANDLER,
 } from './constants';
 
 // The initial state of the ShieldingPage
@@ -26,6 +28,8 @@ export const initialState = {
   latestUnsuccessfulDeploy: null,
   ethTxInfo: null,
   validateForm: null,
+  skipForm: null,
+  isOpenToolTip: false,
 };
 
 function updateFormInfo(state, action) {
@@ -94,6 +98,16 @@ function deployReducer(state = initialState, action) {
       return {
         ...state,
         validateForm: action.validateForm,
+      }
+    case SKIP_FORM:
+      return {
+        ...state,
+        skipForm: action.skipForm,
+      }
+    case TOOL_TIP_HANDLER:
+      return {
+        ...state,
+        isOpenToolTip: action.isOpenToolTip,
       }
     default:
       return state;
