@@ -83,7 +83,7 @@ export class BurnToWithdraw extends React.PureComponent {
   }
 
   render() {
-    const {classes, formInfo, formValidate} = this.props;
+    const {classes, formInfo, formValidate, isDeploy} = this.props;
     return (
       <div className={classes.root}>
         <TextField
@@ -113,7 +113,7 @@ export class BurnToWithdraw extends React.PureComponent {
           <FormHelperText id="component-error-text"> {formValidate.tokenId.message} </FormHelperText>
           }
         </FormControl>
-
+        {!isDeploy &&
         <FormControl className={classes.form}
                      error={formValidate && formValidate.ethAddr && formValidate.ethAddr.isError}>
           <InputLabel htmlFor="amount-input">Ethereum address </InputLabel>
@@ -126,6 +126,7 @@ export class BurnToWithdraw extends React.PureComponent {
           <FormHelperText id="component-error-text"> {formValidate.ethAddr.message} </FormHelperText>
           }
         </FormControl>
+        }
 
         <FormControl className={classes.form}
                      error={formValidate && formValidate.amount && formValidate.amount.isError}>
@@ -147,7 +148,7 @@ export class BurnToWithdraw extends React.PureComponent {
           onClick={this.submitBurnToUnshield}
           className={classes.button}
         >
-          Burn to unshield
+          Burn to {isDeploy ? "deploy" : "unshield"}
         </Button>
       </div>
     );

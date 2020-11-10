@@ -10,6 +10,8 @@ import {buildOptions, makeCall} from "../utils/api-call";
 import {getETHTransactionInfoApiRoute} from "../utils/api-routes";
 import {MAINNET_SHIELD_LOCAL_STORAGE, TESTNET_SHIELD_LOCAL_STORAGE} from "../containers/shielding-page/constants";
 import {MAINNET_UNSHIELD_LOCAL_STORAGE, TESTNET_UNSHIELD_LOCAL_STORAGE} from "../containers/unshielding-page/constants";
+import {MAINNET_DEPLOY_LOCAL_STORAGE, TESTNET_DEPLOY_LOCAL_STORAGE} from "../containers/deploy-page/constants";
+import {MAINNET_UNDEPLOY_LOCAL_STORAGE, TESTNET_UNDEPLOY_LOCAL_STORAGE} from "../containers/undeploy-page/constants";
 const secp256k1 = require('secp256k1');
 const bs58 = require('bs58');
 const eutil = require('ethereumjs-util')
@@ -65,6 +67,22 @@ function getLocalStorageKeyUnshield() {
     return MAINNET_UNSHIELD_LOCAL_STORAGE;
   }
   return TESTNET_UNSHIELD_LOCAL_STORAGE;
+}
+
+function getLocalStorageKeyDeploy() {
+  const network = window.localStorage.getItem(SWITCH_NETWORK);
+  if (network !== null && network === '1') {
+    return MAINNET_DEPLOY_LOCAL_STORAGE;
+  }
+  return TESTNET_DEPLOY_LOCAL_STORAGE;
+}
+
+function getLocalStorageKeyUndeploy() {
+  const network = window.localStorage.getItem(SWITCH_NETWORK);
+  if (network !== null && network === '1') {
+    return MAINNET_UNDEPLOY_LOCAL_STORAGE;
+  }
+  return TESTNET_UNDEPLOY_LOCAL_STORAGE;
 }
 
 function getEtherScanAPIHost() {
@@ -171,10 +189,10 @@ function getDefaultSupportedTokens(isMainnet) {
 // Will remove this list when submit deposit proof raw tx available
 function getWalletList() {
   return [
-    process.env.WALLET_1, // 12S2Wb5zoKjAsecY4aBTfnA3C3Z89D2JwdhctVgCNYPprFntiGXEHrEw9if7p86qKbXS4cQb2tWiSwzg3pNmk9TZn4vXnsYNRSAqo1A
-    process.env.WALLET_2, // 12S3qvLtS9Y673dLsyLmFmctraZyJxgDLTx88WRUev819dmo7BAYAi6g8N8UGU6G4b45gSvjrohkMChJshYV9DaGRN5XTuS3mNMutza
-    process.env.WALLET_3, // 12RzxGz5wQ6YivVgxQq73EVpbYYJpQNvkJ9zG4EkH7Cbm3QUDqkqhPEwzeUdMcoL2vBveBxicXfSYVDz7otW1U29CXsLK25rbkz6s2Q
-    process.env.WALLET_4, // 12S6rMj2Av9ybB7mQYiiqYk1kschxrT7Kj7Ps84Ktz1fuptju37p2ZCGqE9j4Qs3eYufW3GJCF97zBFa9NqeRCQzAb2uMFYvoHzfgai
+    "112t8rnXRDT21fsx5UYR1kGd8yjiygUS3tXfhcRfXy2nmJS3U39vkf76wbQsXguwhHwN2EtBF4YZJ8o1i7MMF9BsKngcgxfkCZBa5P3Fq9xp", // 12S2Wb5zoKjAsecY4aBTfnA3C3Z89D2JwdhctVgCNYPprFntiGXEHrEw9if7p86qKbXS4cQb2tWiSwzg3pNmk9TZn4vXnsYNRSAqo1A
+    "112t8rnXLn4sD7rP98ALejLKoTJm4N9uwavXE2m98h9hcMN9fC7Lp1MRoZJ4G4aXd3ShpaaSzna8s3V8xkvDaKHBBD9mzx9ToDHk6gz5nTnf", // 12S3qvLtS9Y673dLsyLmFmctraZyJxgDLTx88WRUev819dmo7BAYAi6g8N8UGU6G4b45gSvjrohkMChJshYV9DaGRN5XTuS3mNMutza
+    "112t8rnXQoMqs6hcf36qSzyypndZFxRSPQEjoq8AqV7DBM14TY66CdVRTxHwaMSTQ4XCBPEXF5zfwE4wEPSqeD1MaacWa9DwYNcxr16bMFSR", // 12RzxGz5wQ6YivVgxQq73EVpbYYJpQNvkJ9zG4EkH7Cbm3QUDqkqhPEwzeUdMcoL2vBveBxicXfSYVDz7otW1U29CXsLK25rbkz6s2Q
+    "112t8rnXMK3U2VNDaHhxLx9FrS75wVq5YupVk99YenYTYGU2KXJg4iR1j7KDGesi7ju1btmELbPqxtMni1gNHUp6HmYTapBd6Bq4WcjvqdoG", // 12S6rMj2Av9ybB7mQYiiqYk1kschxrT7Kj7Ps84Ktz1fuptju37p2ZCGqE9j4Qs3eYufW3GJCF97zBFa9NqeRCQzAb2uMFYvoHzfgai
   ];
 }
 
@@ -238,4 +256,6 @@ export {
   getLocalStorageKey,
   getLocalStorageKeyUnshield,
   getWalletList,
+  getLocalStorageKeyDeploy,
+  getLocalStorageKeyUndeploy,
 };

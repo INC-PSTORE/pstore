@@ -119,7 +119,7 @@ export class ShieldingProof extends React.PureComponent {
           square
         >
           <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-            <Typography>Deposit to Incognito smart contract</Typography>
+            <Typography>Incognito smart contract</Typography>
           </ExpansionPanelSummary>
           <ExpansionPanelDetails>
             <Table aria-label="simple table">
@@ -141,7 +141,7 @@ export class ShieldingProof extends React.PureComponent {
             square
           >
             <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-              <Typography>Get and Submit deposit proof to Incognito chain</Typography>
+              <Typography>Get and Submit proof to Incognito chain</Typography>
             </ExpansionPanelSummary>
             <ExpansionPanelDetails>
               <Table aria-label="simple table">

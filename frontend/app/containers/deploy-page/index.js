@@ -16,7 +16,7 @@ import {createStructuredSelector} from 'reselect';
 import reducer from './reducer';
 import injectReducer from 'utils/injectReducer';
 import styles from './styles';
-import {changeAmount, changeSelectedToken, changeStep, updateValidateForm, updateEthTxInfo, updateToolTip, getLatestUnsuccessfulDeploySuccess} from './actions';
+import {changeAmount, changeSelectedToken, changeStep, updateValidateForm, updateEthTxInfo, updateToolTip, getLatestUnsuccessfulDeploySuccess, updateSkipForm} from './actions';
 import {
   makeSelectLatestUnsuccessfulDeploy,
   makeSelectDeployActiveStep,
@@ -31,10 +31,8 @@ import {
   burnToDeploy,
   submitDeployToSC,
   refreshDeployStepThunk,
-  getDeployById
 } from './middlewares';
-import BurnToDeploy from '../../components/sc-deploy-step';
-import BurnProofToDeploy from '../../components/sc-deploy-submit-proof-step';
+import BurnProofToWithdraw from '../../components/sc-unshielding-submit-proof-step';
 
 import {
   makeSelectConfigNetwork,
@@ -52,6 +50,7 @@ import ClickAwayListener from "@material-ui/core/ClickAwayListener";
 import Tooltip from "@material-ui/core/Tooltip";
 import HelpOutlineIcon from "@material-ui/icons/HelpOutline";
 import {getLocalStorageKeyDeploy} from "../../common/utils";
+import BurnToWithdraw from "../../components/sc-unshielding-step";
 
 function getDeploySteps() {
   return ['Burn pToken to deposit to pApps', 'Get & submit proof'];
@@ -93,9 +92,9 @@ export class DeployPage extends React.PureComponent {
     switch (activeStep) {
       case 0:
         return (
-          <BurnToDeploy
+          <BurnToWithdraw
             privateIncAccount={privateIncAccount}
-            latestUnsuccessfulDeploy={latestUnsuccessfulDeploy}
+            latestUnsuccessfulUnshield={latestUnsuccessfulDeploy}
             formInfo={formInfo}
             formValidate={formValidate}
             onChangeSelectedToken={onChangeSelectedToken}
@@ -104,19 +103,21 @@ export class DeployPage extends React.PureComponent {
             onSubmitBurnTx={onSubmitBurnTx}
             onUpdateValidateForm={onUpdateValidateForm}
             configNetwork={configNetwork}
+            isDeploy={true}
           />
         );
       default:
         return (
-          <BurnProofToDeploy
+          <BurnProofToWithdraw
             history={history}
             ethTxInfo={ethTxInfo}
             ethAccount={ethAccount}
             privateIncAccount={privateIncAccount}
-            latestUnsuccessfulDeploy={latestUnsuccessfulDeploy}
+            latestUnsuccessfulUnshield={latestUnsuccessfulDeploy}
             onRefreshAndGetProof={onRefreshAndGetProof}
             onSignAndSubmitBurnProof={onSignAndSubmitBurnProof}
-            createNewDeploy={this.createNewDeploy}
+            createNewUnshield={this.createNewDeploy}
+            isDeploy={true}
           />
         );
     }
@@ -138,12 +139,14 @@ export class DeployPage extends React.PureComponent {
       onChangeAmount,
       onUpdateValidateForm,
       onUpdateEthTxInfo,
+      onUpdateSkipForm,
     } = this.props;
     // TODO: replace these methods by rpc call to get pToken
     onChangeAmount();
     onGetLatestUnsuccessfulDeploy();
     onUpdateValidateForm(null);
     onUpdateEthTxInfo(null);
+    onUpdateSkipForm(null);
   }
 
   handleWithdrawInput = e => {
@@ -332,6 +335,7 @@ export function mapDispatchToProps(dispatch) {
     onCreateNewDeploy: (deploy) => dispatch(getLatestUnsuccessfulDeploySuccess(deploy)),
     onUpdateToolTip: (isOpenToolTip) => dispatch(updateToolTip(isOpenToolTip)),
     onUpdateEthTxInfo: (ethTxInfo) => dispatch(updateEthTxInfo(ethTxInfo)),
+    onUpdateSkipForm: (skipForm) => dispatch(updateSkipForm(skipForm)),
   }
 }
 

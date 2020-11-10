@@ -93,7 +93,7 @@ export class BurnProofToWithdraw extends React.PureComponent {
   }
 
   displayForm() {
-    const {classes, latestUnsuccessfulUnshield} = this.props;
+    const {classes, latestUnsuccessfulUnshield, isDeploy} = this.props;
     if (latestUnsuccessfulUnshield && latestUnsuccessfulUnshield.status === INC_BURNED_SUCCESS) {
       return (
         <Paper className={classes.unshield} elevation={1}>
@@ -113,7 +113,7 @@ export class BurnProofToWithdraw extends React.PureComponent {
             onClick={this.signAndSubmitToUnshield}
             className={classes.unshieldButton}
           >
-            Unshield
+            {isDeploy ? "Deploy" : "Unshield"}
           </Button>
         </Paper>
       )
@@ -134,7 +134,7 @@ export class BurnProofToWithdraw extends React.PureComponent {
   }
 
   render() {
-    const {classes, latestUnsuccessfulUnshield, ethTxInfo} = this.props;
+    const {classes, latestUnsuccessfulUnshield, ethTxInfo, isDeploy} = this.props;
     if (latestUnsuccessfulUnshield) {
       let status = 'Success';
       switch (latestUnsuccessfulUnshield.status) {
@@ -186,7 +186,7 @@ export class BurnProofToWithdraw extends React.PureComponent {
               square
             >
               <ExpansionPanelSummary expandIcon={<ExpandMoreIcon/>}>
-                <Typography> Burn to unshield transaction status </Typography>
+                <Typography> Burn to {isDeploy ? "deploy" : "unshield"} transaction status </Typography>
               </ExpansionPanelSummary>
               <ExpansionPanelDetails>
                 <Table className={classes.table} aria-label="simple table">
@@ -209,7 +209,7 @@ export class BurnProofToWithdraw extends React.PureComponent {
               square
             >
               <ExpansionPanelSummary expandIcon={<ExpandMoreIcon/>}>
-                <Typography> Withdraw transaction on ethereum status </Typography>
+                <Typography> {isDeploy ? "Deploy" : "Withdraw"} transaction on ethereum status </Typography>
               </ExpansionPanelSummary>
               <ExpansionPanelDetails>
                 <Table className={classes.table} aria-label="simple table">

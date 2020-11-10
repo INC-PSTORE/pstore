@@ -3,7 +3,6 @@
  */
 
 import { createSelector } from 'reselect';
-import {selectShielding} from "../shielding-page/selectors";
 
 const selectUndeploy = state => state.undeploy; // 'undeploy' here should match to registered reducer name in index.js
 

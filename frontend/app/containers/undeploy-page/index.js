@@ -32,7 +32,7 @@ import {
   makeSelectGeneratedETHAccFromIncAcc, makeSelectConfigNetwork,
 } from '../App/selectors';
 
-import {changeAmount, changeSelectedToken, updateUndeploySuccess, updateToolTip, updateValidateForm} from './actions';
+import {changeAmount, changeSelectedToken, updateUndeploySuccess, updateToolTip, updateValidateForm, updateSkipForm} from './actions';
 
 import {
   undeployThunk,
@@ -158,7 +158,7 @@ export class UndeployPage extends React.PureComponent {
     const undeployProofComp = (
       <ShieldingProof
         ethAccount={ethAccount}
-        latestUnsuccessfulUndeploy={latestUnsuccessfulUndeploy}
+        latestUnsuccessfulShielding={latestUnsuccessfulUndeploy}
         ethTxInfo={ethTxInfo}
         onRefreshShieldingProofStep={onRefreshUndeployProofStep}
         onCheckBalances={this.checkBalances}
@@ -396,6 +396,7 @@ export function mapDispatchToProps(dispatch) {
     onCreateNewUndeploy: () => dispatch(updateUndeploySuccess(null)),
     onUpdateToolTip: (isOpenToolTip) => dispatch(updateToolTip(isOpenToolTip)),
     onUpdateValidateForm: (validateForm) => dispatch(updateValidateForm(validateForm)),
+    onUpdateSkipForm: (skipForm) => dispatch(updateSkipForm(skipForm)),
   };
 }
 

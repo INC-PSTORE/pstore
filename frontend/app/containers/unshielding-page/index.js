@@ -65,7 +65,6 @@ import Tooltip from "@material-ui/core/Tooltip";
 import HelpOutlineIcon from "@material-ui/icons/HelpOutline";
 import {getLocalStorageKeyUnshield} from "../../common/utils";
 
-
 function getUnshieldSteps() {
   return ['Burn ptoken to unshield', 'Get & submit proof'];
 }
@@ -82,6 +81,7 @@ export class UnshieldPage extends React.PureComponent {
     this.updateEthDepositTx = this.updateEthDepositTx.bind(this);
     this.skipStep = this.skipStep.bind(this);
     this.handleWithdrawInput = this.handleWithdrawInput.bind(this);
+    this.updateEthDepositTx = this.updateEthDepositTx.bind(this);
   }
 
   displayStepContent(activeStep) {
@@ -109,7 +109,6 @@ export class UnshieldPage extends React.PureComponent {
         return (
           <BurnToWithdraw
             privateIncAccount={privateIncAccount}
-            ethAccount={ethAccount}
             latestUnsuccessfulUnshield={latestUnsuccessfulUnshield}
             formInfo={formInfo}
             formValidate={formValidate}
@@ -120,6 +119,7 @@ export class UnshieldPage extends React.PureComponent {
             onSubmitBurnTx={onSubmitBurnTx}
             onUpdateValidateForm={onUpdateValidateForm}
             configNetwork={configNetwork}
+            isDeploy={false}
           />
         );
       default:
@@ -133,6 +133,7 @@ export class UnshieldPage extends React.PureComponent {
             onRefreshAndGetProof={onRefreshAndGetProof}
             onSignAndSubmitBurnProof={onSignAndSubmitBurnProof}
             createNewUnshield={this.createNewUnshield}
+            isDeploy={false}
           />
         );
     }
