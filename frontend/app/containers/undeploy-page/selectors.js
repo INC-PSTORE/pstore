@@ -3,6 +3,7 @@
  */
 
 import { createSelector } from 'reselect';
+import {selectShielding} from "../shielding-page/selectors";
 
 const selectUndeploy = state => state.undeploy; // 'undeploy' here should match to registered reducer name in index.js
 
@@ -36,6 +37,24 @@ const makeSelectInsufficientBalancesInfo = () =>
     undeployState => undeployState.insufficientBalancesInfo,
   );
 
+const makeSelectSkipForm = () =>
+  createSelector(
+    selectUndeploy,
+    undeployState => undeployState.skipForm,
+  );
+
+const makeSelectToolTip = () =>
+  createSelector(
+    selectUndeploy,
+    undeployState => undeployState.isOpenToolTip,
+  );
+
+const makeSelectValidateForm = () =>
+  createSelector(
+    selectUndeploy,
+    undeployState => undeployState.validateForm,
+  );
+
 export {
   selectUndeploy,
   makeSelectFormInfo,
@@ -43,4 +62,7 @@ export {
   makeSelectETHTxInfo,
   makeSelectUndeployProofSubmitStatus,
   makeSelectInsufficientBalancesInfo,
+  makeSelectSkipForm,
+  makeSelectToolTip,
+  makeSelectValidateForm,
 };

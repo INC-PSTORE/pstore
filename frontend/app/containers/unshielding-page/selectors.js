@@ -53,7 +53,7 @@ const makeSelectToolTip = () =>
   createSelector(
     selectUnshield,
     unshieldState => unshieldState.isOpenToolTip,
-  );;
+  );
 
 const makeSelectLatestUnsuccessfulUnshield = () =>
   createSelector(

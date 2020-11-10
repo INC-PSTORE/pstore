@@ -12,6 +12,9 @@ import {
   UPDATE_UNDEPLOY_SUCCESS,
   UPDATE_UNDEPLOY_FAILURE,
   INSUFFICIENT_BALANCES,
+  SKIP_FORM,
+  TOOL_TIP_HANDLER,
+  UPDATE_VALIDATE_INPUT
 } from './constants';
 
 export function changeSelectedToken(selectedToken) {
@@ -82,4 +85,25 @@ export function insufficientBalances(insufficientBalancesInfo) {
     type: INSUFFICIENT_BALANCES,
     insufficientBalancesInfo,
   };
+}
+
+export function updateSkipForm(skipForm) {
+  return {
+    type: SKIP_FORM,
+    skipForm,
+  }
+}
+
+export function updateToolTip(isOpenToolTip) {
+  return {
+    type: TOOL_TIP_HANDLER,
+    isOpenToolTip,
+  }
+}
+
+export function updateValidateForm(validateForm) {
+  return {
+    type: UPDATE_VALIDATE_INPUT,
+    validateForm,
+  }
 }

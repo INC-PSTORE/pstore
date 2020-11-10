@@ -15,3 +15,9 @@ export const UPDATE_UNDEPLOY_SUCCESS = 'pstuff/UndeploygPage/UPDATE_UNDEPLOY_SUC
 export const UPDATE_UNDEPLOY_FAILURE = 'pstuff/UndeploygPage/UPDATE_UNDEPLOY_FAILURE';
 
 export const INSUFFICIENT_BALANCES = 'pstuff/UndeployPage/INSUFFICIENT_BALANCES';
+
+export const SKIP_FORM = 'pstuff/UndeployPage/SKIP_FORM';
+export const TESTNET_UNDEPLOY_LOCAL_STORAGE = 'pstuff/UndeployPage/TESTNET_SHIELD_LOCAL_STORAGE';
+export const MAINNET_UNDEPLOY_LOCAL_STORAGE = 'pstuff/UndeployPage/MAINNET_SHIELD_LOCAL_STORAGE';
+export const TOOL_TIP_HANDLER = 'pstuff/UndeployPage/TOOL_TIP_HANDLER';
+export const UPDATE_VALIDATE_INPUT = 'pstuff/UndeployPage/UPDATE_VALIDATE_INPUT';

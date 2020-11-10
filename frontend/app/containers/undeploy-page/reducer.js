@@ -12,6 +12,9 @@ import {
   UPDATE_UNDEPLOY_SUCCESS,
   UPDATE_UNDEPLOY_FAILURE,
   INSUFFICIENT_BALANCES,
+  SKIP_FORM,
+  TOOL_TIP_HANDLER,
+  UPDATE_VALIDATE_INPUT
 } from './constants';
 
 // The initial state of the UndeployPage
@@ -27,6 +30,9 @@ export const initialState = {
   latestUnsuccessfulUndeploy: null,
   ethTxInfo: null,
   insufficientBalancesInfo: null,
+  skipForm: null,
+  isOpenToolTip: false,
+  validateForm: null,
 };
 
 function updateFormInfo(state, action, fieldName) {
@@ -108,6 +114,21 @@ function undeployReducer(state = initialState, action) {
         ...state,
         insufficientBalancesInfo: action.insufficientBalancesInfo,
       };
+    case SKIP_FORM:
+      return {
+        ...state,
+        skipForm: action.skipForm,
+      }
+    case TOOL_TIP_HANDLER:
+      return {
+        ...state,
+        isOpenToolTip: action.isOpenToolTip,
+      }
+    case UPDATE_VALIDATE_INPUT:
+      return {
+        ...state,
+        validateForm: action.validateForm,
+      }
 
     default:
       return state;

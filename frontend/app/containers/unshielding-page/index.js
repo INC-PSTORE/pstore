@@ -206,7 +206,6 @@ export class UnshieldPage extends React.PureComponent {
       onChangeEthAddress,
       onUpdateValidateForm,
       onUpdateSkipForm,
-      onUpdateEthTxInfo,
     } = this.props;
     // TODO: replace these methods by rpc call to get pToken
     onChangeAmount();
@@ -214,7 +213,6 @@ export class UnshieldPage extends React.PureComponent {
     onGetLatestUnsuccessfulUnshielding();
     onUpdateValidateForm(null);
     onUpdateSkipForm(null);
-    onUpdateEthTxInfo(null);
   }
 
   render() {
@@ -294,7 +292,7 @@ export class UnshieldPage extends React.PureComponent {
               </div>
             </FormControl>
             :
-            (latestUnsuccessfulUnshield && ethTxInfo && latestUnsuccessfulUnshield.status === ETH_SUBMITING_TX && (ethTxInfo.status === 2 || !ethTxInfo.status))
+            (latestUnsuccessfulUnshield && latestUnsuccessfulUnshield.status === ETH_SUBMITING_TX && (!ethTxInfo || (ethTxInfo.status === 2 || !ethTxInfo.status)))
               ?
               <div className={classes.skipStep}>
                 <a className={classes.skipStepLink} onClick={this.skipStep}> {skipTitle} </a>

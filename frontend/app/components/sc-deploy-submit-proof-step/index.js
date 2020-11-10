@@ -26,7 +26,7 @@ import {
   ETH_SUBMITING_TX,
   ETH_DEPLOY_SUCCESS,
   INC_BURNED_FAILED,
-  ETH_DEPLOY_FAILED,
+  ETH_DEPLOY_FAILED, ETH_WITHDRAW_FAILED, ETH_WITHDRAW_SUCCESS, INC_BURN_TO_UNSHIELD_INIT, INC_BURNED_TO_UNSHIELD,
 } from "../../common/constants";
 import {Paper} from '@material-ui/core';
 import CircularProgress from "@material-ui/core/CircularProgress";
@@ -49,8 +49,9 @@ export class BurnProofToDeploy extends React.PureComponent {
   }
 
   redirectToAccounts() {
-    const {history} = this.props;
+    const {history, createNewDeploy} = this.props;
     history.push('/wallet');
+    createNewDeploy();
   }
 
   createData(fieldName, value) {
@@ -60,7 +61,7 @@ export class BurnProofToDeploy extends React.PureComponent {
   componentDidMount() {
     const {latestUnsuccessfulDeploy, onRefreshAndGetProof} = this.props;
     onRefreshAndGetProof();
-    if (latestUnsuccessfulDeploy && [INC_BURN_TO_DEPLOY_INIT, ETH_SUBMITING_TX].includes(latestUnsuccessfulDeploy.status)) {
+    if (latestUnsuccessfulDeploy && [INC_BURN_TO_UNSHIELD_INIT, ETH_SUBMITING_TX].includes(latestUnsuccessfulDeploy.status)) {
       refresher = setInterval(this.refresh, 30000); // run every 30s
     }
   }
@@ -74,7 +75,7 @@ export class BurnProofToDeploy extends React.PureComponent {
 
   componentDidUpdate(prevProps) {
     const {latestUnsuccessfulDeploy} = this.props;
-    if (latestUnsuccessfulDeploy && [ETH_DEPLOY_SUCCESS, INC_BURNED_FAILED, ETH_DEPLOY_FAILED].includes(latestUnsuccessfulDeploy.status)) {
+    if (latestUnsuccessfulDeploy && [ETH_WITHDRAW_SUCCESS, INC_BURNED_FAILED, ETH_WITHDRAW_FAILED].includes(latestUnsuccessfulDeploy.status)) {
       if (refresher) {
         clearInterval(refresher);
       }
@@ -84,7 +85,7 @@ export class BurnProofToDeploy extends React.PureComponent {
 
   refresh() {
     const {latestUnsuccessfulDeploy, onRefreshAndGetProof} = this.props;
-    if (latestUnsuccessfulDeploy  && [INC_BURN_TO_DEPLOY_INIT, ETH_SUBMITING_TX].includes(latestUnsuccessfulDeploy.status)) {
+    if (latestUnsuccessfulDeploy  && [INC_BURN_TO_UNSHIELD_INIT, ETH_SUBMITING_TX].includes(latestUnsuccessfulDeploy.status)) {
       onRefreshAndGetProof();
     }
   }
@@ -98,7 +99,7 @@ export class BurnProofToDeploy extends React.PureComponent {
             className={classes.burnProof}
             id="outlined-read-only-input"
             label="Proof"
-            value={latestUnsuccessfulDeploy.burnToDeployProof}
+            value={latestUnsuccessfulDeploy.ethrawinput}
             InputProps={{
               readOnly: true,
             }}
@@ -114,7 +115,7 @@ export class BurnProofToDeploy extends React.PureComponent {
           </Button>
         </Paper>
       )
-    } else if (latestUnsuccessfulDeploy && latestUnsuccessfulDeploy.status === ETH_DEPLOY_SUCCESS) {
+    } else if (latestUnsuccessfulDeploy && latestUnsuccessfulDeploy.status === ETH_WITHDRAW_SUCCESS) {
       return (
         <div>
           <Button
@@ -135,10 +136,10 @@ export class BurnProofToDeploy extends React.PureComponent {
     if (latestUnsuccessfulDeploy) {
       let status = 'Success';
       switch (latestUnsuccessfulDeploy.status) {
-        case INC_BURN_TO_DEPLOY_INIT:
+        case INC_BURN_TO_UNSHIELD_INIT:
           status = 'Submiting'
           break;
-        case INC_BURNED_TO_DEPLOY:
+        case INC_BURNED_TO_UNSHIELD:
           status = 'Submitted'
           break;
         case INC_BURNED_NOT_FOUND:
@@ -162,7 +163,7 @@ export class BurnProofToDeploy extends React.PureComponent {
       let deployEthStatus = [];
       if (ethTxInfo && latestUnsuccessfulDeploy.status > INC_TRANSACTION_REJECTED) {
         deployEthStatus = [
-          this.createData('Transaction hash', ethTxInfo.transactionHash),
+          this.createData('Transaction hash', ethTxInfo.hash),
           this.createData('Status', ethTxInfo.status === 2 || ethTxInfo.status === undefined  ? 'Pending' : 1 ? 'Success' : 'Reverted'),
           this.createData('Block', ethTxInfo.blockNumber),
           this.createData('From', ethTxInfo.from),
@@ -173,7 +174,7 @@ export class BurnProofToDeploy extends React.PureComponent {
       }
 
       let disableGetProof = false;
-      if ([INC_BURNED_SUCCESS, INC_BURNED_FAILED, ETH_DEPLOY_FAILED, ETH_DEPLOY_SUCCESS].includes(latestUnsuccessfulDeploy.status)) {
+      if ([INC_BURNED_SUCCESS, INC_BURNED_FAILED, ETH_WITHDRAW_FAILED, ETH_WITHDRAW_SUCCESS].includes(latestUnsuccessfulDeploy.status)) {
         disableGetProof = true;
       }
       return (

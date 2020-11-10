@@ -78,7 +78,6 @@ export class DeployPage extends React.PureComponent {
       onChangeStep,
       onSubmitBurnTx,
       onSignAndSubmitBurnProof,
-      onGetDeployById,
       onUpdateValidateForm,
       onRefreshAndGetProof,
       ethTxInfo,
@@ -117,7 +116,6 @@ export class DeployPage extends React.PureComponent {
             latestUnsuccessfulDeploy={latestUnsuccessfulDeploy}
             onRefreshAndGetProof={onRefreshAndGetProof}
             onSignAndSubmitBurnProof={onSignAndSubmitBurnProof}
-            onGetDeployById={onGetDeployById}
             createNewDeploy={this.createNewDeploy}
           />
         );
@@ -277,7 +275,7 @@ export class DeployPage extends React.PureComponent {
               </div>
             </FormControl>
             :
-            (latestUnsuccessfulDeploy && ethTxInfo && latestUnsuccessfulDeploy.status === ETH_SUBMITING_TX && (ethTxInfo.status === 2 || !ethTxInfo.status))
+            (latestUnsuccessfulDeploy && latestUnsuccessfulDeploy.status === ETH_SUBMITING_TX && (!ethTxInfo || (ethTxInfo.status === 2 || !ethTxInfo.status)))
               ?
               <div className={classes.skipStep}>
                 <a className={classes.skipStepLink} onClick={this.skipStep}> {skipTitle} </a>
@@ -330,7 +328,6 @@ export function mapDispatchToProps(dispatch) {
     onSubmitBurnTx: (formInfo, privateIncAccount) => dispatch(burnToDeploy(formInfo, privateIncAccount)),
     onSignAndSubmitBurnProof: (ethAccount, deployObject) => dispatch(submitDeployToSC(ethAccount, deployObject)),
     onRefreshAndGetProof: () => dispatch(refreshDeployStepThunk()),
-    onGetDeployById: (deployId) => dispatch(getDeployById(deployId)),
     onUpdateValidateForm: (validateForm) => dispatch(updateValidateForm(validateForm)),
     onCreateNewDeploy: (deploy) => dispatch(getLatestUnsuccessfulDeploySuccess(deploy)),
     onUpdateToolTip: (isOpenToolTip) => dispatch(updateToolTip(isOpenToolTip)),

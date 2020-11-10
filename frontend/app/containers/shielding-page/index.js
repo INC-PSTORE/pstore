@@ -318,7 +318,7 @@ export class ShieldingPage extends React.PureComponent {
               </div>
             </FormControl>
             :
-            (!latestUnsuccessfulShielding || [SHIELDING_PROOF_SUBMIT_REJECTED, ETH_DEPOSIT_FAILED].includes(latestUnsuccessfulShielding.status) || !ethTxInfo || (latestUnsuccessfulShielding.status === ETH_DEPOSITING_TO_INC_CONTRACT && ethTxInfo.status === 2))
+            (!latestUnsuccessfulShielding || [SHIELDING_PROOF_SUBMIT_REJECTED, ETH_DEPOSIT_FAILED].includes(latestUnsuccessfulShielding.status) || !ethTxInfo || (latestUnsuccessfulShielding.status === ETH_DEPOSITING_TO_INC_CONTRACT && (!ethTxInfo.status || ethTxInfo.status === 2)))
               ?
               <div className={classes.skipStep}>
               <a className={classes.skipStepLink} onClick={this.skipStep}> {message} </a> <Grid item>
