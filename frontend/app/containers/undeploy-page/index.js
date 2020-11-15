@@ -270,7 +270,7 @@ export class UndeployPage extends React.PureComponent {
 
     let message = ">> skip step 1";
     if (latestUnsuccessfulUndeploy) {
-      message = ">> update deposit eth transaction hash";
+      message = ">> update undeploy eth transaction hash";
     }
     let helperText = "Submit when you already deposited to incognito contract";
     if (latestUnsuccessfulUndeploy) {

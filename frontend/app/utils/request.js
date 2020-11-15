@@ -66,7 +66,7 @@ function fetchWithTimeout(fetchPromise, ms) {
  * @return {object}           The response data
  */
 export default function request(url, options) {
-  return fetchWithTimeout(fetch(url, options), 60000)
+  return fetchWithTimeout(fetch(url, options), 120000)
     .then(checkStatus)
     .then(parseJSON);
 }

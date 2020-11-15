@@ -155,7 +155,7 @@ function getDefaultSupportedTokens(isMainnet) {
       incTokenId: 'ffd8d42dc40a8d166ea4848baf8b5f6e912ad79875f4373070b59392b1756c8f',
       extTokenId: '0x0000000000000000000000000000000000000000',
       tokenSymbol: 'ETH',
-      eDecimals: 0,
+      eDecimals: 18,
       pDecimals: 9,
       icon: 'https://s3.amazonaws.com/incognito-org/wallet/cryptocurrency-icons/32@2x/color/eth@2x.png',
     },
@@ -189,10 +189,20 @@ function getDefaultSupportedTokens(isMainnet) {
 // Will remove this list when submit deposit proof raw tx available
 function getWalletList() {
   return [
-    "112t8rnXRDT21fsx5UYR1kGd8yjiygUS3tXfhcRfXy2nmJS3U39vkf76wbQsXguwhHwN2EtBF4YZJ8o1i7MMF9BsKngcgxfkCZBa5P3Fq9xp", // 12S2Wb5zoKjAsecY4aBTfnA3C3Z89D2JwdhctVgCNYPprFntiGXEHrEw9if7p86qKbXS4cQb2tWiSwzg3pNmk9TZn4vXnsYNRSAqo1A
-    "112t8rnXLn4sD7rP98ALejLKoTJm4N9uwavXE2m98h9hcMN9fC7Lp1MRoZJ4G4aXd3ShpaaSzna8s3V8xkvDaKHBBD9mzx9ToDHk6gz5nTnf", // 12S3qvLtS9Y673dLsyLmFmctraZyJxgDLTx88WRUev819dmo7BAYAi6g8N8UGU6G4b45gSvjrohkMChJshYV9DaGRN5XTuS3mNMutza
-    "112t8rnXQoMqs6hcf36qSzyypndZFxRSPQEjoq8AqV7DBM14TY66CdVRTxHwaMSTQ4XCBPEXF5zfwE4wEPSqeD1MaacWa9DwYNcxr16bMFSR", // 12RzxGz5wQ6YivVgxQq73EVpbYYJpQNvkJ9zG4EkH7Cbm3QUDqkqhPEwzeUdMcoL2vBveBxicXfSYVDz7otW1U29CXsLK25rbkz6s2Q
-    "112t8rnXMK3U2VNDaHhxLx9FrS75wVq5YupVk99YenYTYGU2KXJg4iR1j7KDGesi7ju1btmELbPqxtMni1gNHUp6HmYTapBd6Bq4WcjvqdoG", // 12S6rMj2Av9ybB7mQYiiqYk1kschxrT7Kj7Ps84Ktz1fuptju37p2ZCGqE9j4Qs3eYufW3GJCF97zBFa9NqeRCQzAb2uMFYvoHzfgai
+    process.env.WALLET_1, // 12S2Wb5zoKjAsecY4aBTfnA3C3Z89D2JwdhctVgCNYPprFntiGXEHrEw9if7p86qKbXS4cQb2tWiSwzg3pNmk9TZn4vXnsYNRSAqo1A
+    process.env.WALLET_2, // 12S3qvLtS9Y673dLsyLmFmctraZyJxgDLTx88WRUev819dmo7BAYAi6g8N8UGU6G4b45gSvjrohkMChJshYV9DaGRN5XTuS3mNMutza
+    process.env.WALLET_3, // 12RzxGz5wQ6YivVgxQq73EVpbYYJpQNvkJ9zG4EkH7Cbm3QUDqkqhPEwzeUdMcoL2vBveBxicXfSYVDz7otW1U29CXsLK25rbkz6s2Q
+    process.env.WALLET_4, // 12S6rMj2Av9ybB7mQYiiqYk1kschxrT7Kj7Ps84Ktz1fuptju37p2ZCGqE9j4Qs3eYufW3GJCF97zBFa9NqeRCQzAb2uMFYvoHzfgai
+  ];
+}
+
+// Will remove this list when submit undeploy proof raw tx available
+function getWalletListUndeploy() {
+  return [
+    process.env.WALLET_UNDEPLOY_1, // 12S1wkJrFMXu3htu4mM4S2Axaqf1yiLtq6etxXMdeJd9WwNSNeoLk9UjBkj8MozDck6KLMGNJiHB3xR6L81wNDS4baaC5SwbE3CURoZ
+    process.env.WALLET_UNDEPLOY_2, // 12S3oHXskKkUc1TbvtxGep61h35HEhKrrs4QqYwDhiDAN8of4aVfuD4Ei7G3qyWHQPfFSsQRtWGw9y3j9FQwCCSNqX5aTDCVsCwcPok
+    process.env.WALLET_UNDEPLOY_3, // 12RpocMs9RTZ7SxBC2j5WRSja8paSnohPCLDvvWeFcQuD8eS9giq7JcG1BkVVsVNi4iHMV9krgUtgwqfQYLR2pvbdF1Mw5bpVwGmBKj
+    process.env.WALLET_UNDEPLOY_4, // 12RwypvXSocCNtzpN9tNNEnBLwwJJ32XGTkKtq4kxgvR1MjwM2E7zD1Kxgqj5bUTe9A5L5kbh4pjEZPVMjt7b3Z1CjAtvra4MtimDhZ
   ];
 }
 
@@ -258,4 +268,5 @@ export {
   getWalletList,
   getLocalStorageKeyDeploy,
   getLocalStorageKeyUndeploy,
+  getWalletListUndeploy,
 };
