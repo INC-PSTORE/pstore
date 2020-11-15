@@ -206,6 +206,19 @@ function getWalletListUndeploy() {
   ];
 }
 
+function getNews() {
+  return [
+    {
+      description: "<i>Tips</i>: do things with common amount will gain more privacy",
+      isLinked: false,
+    },
+    {
+      description: '<i>News</i>: Incognito core team has released awesome <b>Privacy Quest</b> <t/> <a target="_blank" href="https://incognito.org/quest" style="color: gray; border-left: 1px solid gray; margin-left: 4px; padding-left: 4px" > Learn More </a>',
+      isLinked: true,
+    }
+  ];
+}
+
 function uuidV4() {
   return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, c =>
     (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
@@ -269,4 +282,5 @@ export {
   getLocalStorageKeyDeploy,
   getLocalStorageKeyUndeploy,
   getWalletListUndeploy,
+  getNews,
 };

@@ -16,6 +16,8 @@ import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
+import {Paper} from '@material-ui/core'
+import Carousel from 'react-material-ui-carousel'
 
 import Transfer from '../token-transfer';
 import CustomModal from '../../components/modal';
@@ -42,7 +44,15 @@ import {
 import {selectWalletToken, closeTransferModal} from './actions';
 
 import {DEFAULT_PRV_FEE} from "../../common/constants";
+import {getNews} from "../../common/utils";
 
+function Item(props) {
+  return (
+    <Paper>
+      <p dangerouslySetInnerHTML={{__html:props.item.description}} />
+    </Paper>
+  )
+}
 
 export class WalletPage extends React.PureComponent {
   constructor() {
@@ -55,6 +65,7 @@ export class WalletPage extends React.PureComponent {
     this.goToUndeploy = this.goToUndeploy.bind(this);
     this.openTransferModal = this.openTransferModal.bind(this);
     this.closeTransfer = this.closeTransfer.bind(this);
+    this.newsSlider = this.newsSlider.bind(this);
   }
 
   componentDidMount() {
@@ -65,7 +76,6 @@ export class WalletPage extends React.PureComponent {
   }
 
   openTransferModal(token) {
-    console.log('ahihi: ', token);
     this.props.onSelectWalletToken(token);
   }
 
@@ -99,6 +109,23 @@ export class WalletPage extends React.PureComponent {
     onImportPrivateIncAccount(privateKeyStr);
   }
 
+  newsSlider() {
+    let items = getNews();
+
+    return (
+      <Carousel
+        interval={6000}
+        indicators={false}
+        navButtonsAlwaysVisible={false}
+        navButtonsAlwaysInvisible={true}
+      >
+        {
+          items.map((item, i) => <Item key={i} item={item}/>)
+        }
+      </Carousel>
+    )
+  }
+
   buildShownComp() {
     const {
       classes,
@@ -106,12 +133,16 @@ export class WalletPage extends React.PureComponent {
       privateIncAccount,
       selectedWalletToken,
       isShowTransfer,
-      configNetwork,
     } = this.props;
 
     if (privateIncAccount.privateKey) {
       return (
         <div className={classes.root}>
+          <div className={classes.news}>
+            <img className={classes.loudSpeaker}
+                 src={"https://cdn0.iconfinder.com/data/icons/business-management-line-2/24/megaphone-512.png"}/>
+            {this.newsSlider()}
+          </div>
           <div className={classes.account}>
             <SectionView label='Your account'>
               <div className={classes.keyView}>

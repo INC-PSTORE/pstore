@@ -59,12 +59,27 @@ const styles = theme => ({
     root: {
       width: '80% !important',
     },
+    loudSpeaker: {
+      display: 'none',
+    }
   },
   '@media (max-width: 1300px)': {
     root: {
       width: '70%',
     },
   },
+  news: {
+    display: 'flex',
+    flexWrap: 'wrap',
+    flexDirection: 'row',
+  },
+  loudSpeaker: {
+    height: '25px',
+    weight: '25px',
+    marginTop: '10px',
+    marginRight: '5px'
+  },
+
 });
 
 export default styles;
