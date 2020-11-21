@@ -18,7 +18,9 @@ import {
   COUNT_DOWN_REQUESTS,
   ENABLE_META_MASK_ACCOUNTS,
   SWITCH_NETWORK,
- } from './constants';
+  ENABLE_WALLET_CONNECT_ACCOUNTS,
+  OPEN_WALLET_LIST,
+} from './constants';
 
 import { getIncKeyAccountByName } from '../../services/incognito/wallet';
 import { PRIVATE_INC_ACC_NAME, TEMP_INC_ACC_NAME } from '../accounts/constants';
@@ -186,9 +188,23 @@ export function updateMetaMask(metaMask) {
   }
 }
 
+export function updateWalletConnect(walletConnect) {
+  return {
+    type: ENABLE_WALLET_CONNECT_ACCOUNTS,
+    walletConnect,
+  }
+}
+
 export function updateNetwork(isMainnet) {
   return {
     type: SWITCH_NETWORK,
     isMainnet,
+  }
+}
+
+export function openWalletList(isOpen) {
+  return {
+    type: OPEN_WALLET_LIST,
+    isOpen,
   }
 }

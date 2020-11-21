@@ -73,6 +73,15 @@ export const STORAGE_KEY = {
 export const INC_WALLET_BACKUP_PASS = '123';
 export const INC_WALLET_PASSPHRASE = '123';
 
+export const ETH_MAINNET_ID = "0x1";
+export const ETH_KOVAN_ID = "0x2a";
+export const INCOGNITO_FULLNODE_TESTNET = "https://testnet1.incognito.org/fullnode";
+export const INCOGNITO_FULLNODE_MAINNET = "https://fullnode.incognito.best";
+export const ETH_INFURA_TESTNET = "https://kovan.infura.io/v3/34918000975d4374a056ed78fe21c517";
+export const ETH_INFURA_MAINNET = "https://mainnet.infura.io/v3/34918000975d4374a056ed78fe21c517";
+export const INCOGNITO_API_TESTNET = "https://test-api2.incognito.org";
+export const INCOGNITO_API_MAINNET = "https://api.incognito.org";
+
 export const DEFAULT_PRV_FEE = 100;   // in nano PRV
 export const DEFAULT_PRV_FEE_VALIDATE_SHIELD = 10000;
 

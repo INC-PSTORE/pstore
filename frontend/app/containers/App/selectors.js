@@ -21,8 +21,10 @@ const makeSelectIsPappsMenuListOpened = () => createSelector(selectApp, appState
 
 const makeSelectRequestings = () => createSelector(selectApp, appState => appState.requestings);
 
-const makeSelecMetaMask = () => createSelector(selectApp, appState => appState.metaMask);
+const makeSelectMetaMask = () => createSelector(selectApp, appState => appState.metaMask);
+const makeSelectWalletConnect = () => createSelector(selectApp, appState => appState.walletConnect);
 const makeSelectConfigNetwork = () => createSelector(selectApp, appState => appState.configNetwork);
+const makeSelectOpenWalletList = () => createSelector(selectApp, appState => appState.isOpenWalletList);
 
 export {
   makeSelectLocation,
@@ -38,6 +40,8 @@ export {
   makeSelectIsPappsMenuListOpened,
 
   makeSelectRequestings,
-  makeSelecMetaMask,
+  makeSelectMetaMask,
   makeSelectConfigNetwork,
+  makeSelectWalletConnect,
+  makeSelectOpenWalletList,
 };

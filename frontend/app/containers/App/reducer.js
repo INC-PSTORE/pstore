@@ -18,6 +18,8 @@ import {
   COUNT_DOWN_REQUESTS,
   ENABLE_META_MASK_ACCOUNTS,
   SWITCH_NETWORK,
+  ENABLE_WALLET_CONNECT_ACCOUNTS,
+  OPEN_WALLET_LIST,
 } from './constants';
 
 import {
@@ -28,6 +30,13 @@ import {
 import { getIncKeyAccountByName } from '../../services/incognito/wallet';
 import { getKeysFromAccount } from '../../services/eth/wallet';
 import { genETHAccFromIncPrivKey } from '../../common/utils';
+import {
+  ETH_MAINNET_ID,
+  INCOGNITO_API_MAINNET,
+  INCOGNITO_API_TESTNET,
+  INCOGNITO_FULLNODE_MAINNET,
+  INCOGNITO_FULLNODE_TESTNET
+} from "../../common/constants";
 
 // The initial state of the ShieldingPage
 export const initialState = {
@@ -53,24 +62,27 @@ export const initialState = {
   requestings: 0,
   metaMask: {
     isMetaMaskEnabled: false,
-    metaMaskRequiredMess: null,
+    requiredMess: null,
     metaMaskAccounts: null,
-    chainId: 1,
+    chainId: ETH_MAINNET_ID,
+  },
+  walletConnect: {
+    connector: null,
+    requiredMess: null,
+    connectorAccounts: null,
+    chainId: ETH_MAINNET_ID,
   },
   configNetwork: {
     isMainnet: false,
     // mainnet
-    mainnetFullNodeUrl: "https://fullnode.incognito.best",
-    mainnetApiUrl: "https://api.incognito.org",
-    // mainnetVault: "0x97875355ef55ae35613029df8b1c8cf8f89c9066",
-    // mainnetEthFullNode: "https://mainnet.infura.io/v3/34918000975d4374a056ed78fe21c517",
+    mainnetFullNodeUrl: INCOGNITO_FULLNODE_MAINNET,
+    mainnetApiUrl: INCOGNITO_API_MAINNET,
 
     // testnet
-    testnetFullNodeUrl: "https://testnet1.incognito.org/fullnode",
-    testnetApiUrl: "https://test-api2.incognito.org",
-    // testnetVault: "0xE0D5e7217c6C4bc475404b26d763fAD3F14D2b86",
-    // testnetEthFullNode: "https://kovan.infura.io/v3/34918000975d4374a056ed78fe21c517",
+    testnetFullNodeUrl: INCOGNITO_FULLNODE_TESTNET,
+    testnetApiUrl: INCOGNITO_API_TESTNET,
   },
+  isOpenWalletList: false,
 };
 
 function addPrivateIncAccount(state, action) {
@@ -203,11 +215,22 @@ function appReducer(state = initialState, action) {
         metaMask: {
           ...state.metaMask,
           isMetaMaskEnabled: action.metaMask.isMetaMaskEnabled,
-          metaMaskRequiredMess: action.metaMask.metaMaskRequiredMess,
+          requiredMess: action.metaMask.requiredMess,
           metaMaskAccounts: action.metaMask.metaMaskAccounts,
           chainId: action.metaMask.chainId,
         }
       }
+    case ENABLE_WALLET_CONNECT_ACCOUNTS:
+      return {
+        ...state,
+        walletConnect: {
+          ...state.walletConnect,
+          connector: action.walletConnect.connector,
+          requiredMess:  action.walletConnect.requiredMess,
+          connectorAccounts:  action.walletConnect.connectorAccounts,
+          chainId:  action.walletConnect.chainId,
+        }
+      };
     case SWITCH_NETWORK:
       return {
         ...state,
@@ -215,6 +238,11 @@ function appReducer(state = initialState, action) {
           ...state.configNetwork,
           isMainnet: action.isMainnet,
         }
+      }
+    case OPEN_WALLET_LIST:
+      return {
+        ...state,
+        isOpenWalletList: action.isOpen,
       }
     default:
       return state;

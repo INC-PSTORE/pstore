@@ -27,8 +27,17 @@ import {NavLink} from 'react-router-dom';
 import Button from '@material-ui/core/Button';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormGroup from '@material-ui/core/FormGroup';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import ListItemText from '@material-ui/core/ListItemText';
+import ListItem from '@material-ui/core/ListItem';
+import List from '@material-ui/core/List';
+import Divider from '@material-ui/core/Divider';
 
-import {loadAccountsThunk} from './middlewares';
+import {enableMetaMask, enableWalletConnect, loadAccountsThunk} from './middlewares';
 import history from '../../utils/history';
 import {SWITCH_NETWORK} from './constants';
 
@@ -41,15 +50,30 @@ import {
   makeSelectIsOpenedInfoDialog,
   makeSelectIsPappsMenuListOpened,
   makeSelectRequestings,
-  makeSelecMetaMask,
+  makeSelectMetaMask,
   makeSelectConfigNetwork,
+  makeSelectWalletConnect,
+  makeSelectOpenWalletList,
 } from './selectors';
 
-import { toggleInfoDialog, togglePappsMenuList, closePappsMenuList, updateNetwork } from './actions';
+import {toggleInfoDialog, togglePappsMenuList, closePappsMenuList, updateNetwork, openWalletList} from './actions';
 import {loadTokensInfoThunk} from "../wallet-page/middlewares";
+import {ETH_KOVAN_ID, ETH_MAINNET_ID} from "../../common/constants";
 
 // import injectReducer from 'utils/injectReducer';
 // import { reducer } from './reducer';
+
+function ethConnectMess(walletConnect, metaMask, configNetwork) {
+  if (metaMask.isMetaMaskEnabled || walletConnect.connector && walletConnect.connector.connected) {
+    const tmp = metaMask.isMetaMaskEnabled ? metaMask : walletConnect;
+    if (tmp.chainId !== ETH_MAINNET_ID && tmp.chainId !== ETH_KOVAN_ID || (!configNetwork.isMainnet && tmp.chainId !== ETH_KOVAN_ID) || (configNetwork.isMainnet && tmp.chainId !== ETH_MAINNET_ID)) {
+      return tmp.requiredMess ? tmp.requiredMess : "switch eth network to " + (tmp.chainId !== ETH_KOVAN_ID ? "kovan" : "mainnet") + " please";
+    }
+    return null;
+  } else {
+    return "Need connect to eth wallet to use awesome features";
+  }
+}
 
 /* eslint-disable react/prefer-stateless-function */
 export class App extends React.PureComponent {
@@ -60,6 +84,8 @@ export class App extends React.PureComponent {
     this.closePappsMenuList = this.closePappsMenuList.bind(this);
     this.togglePappsMenuList = this.togglePappsMenuList.bind(this);
     this.handleChange = this.handleChange.bind(this);
+    this.handleOpen = this.handleOpen.bind(this);
+    this.handleClose = this.handleClose.bind(this);
   }
 
   componentDidMount() {
@@ -90,29 +116,43 @@ export class App extends React.PureComponent {
     if ((currentPath === '/' || currentPath === '/wallet') && privateIncAccount && privateIncAccount.privateKey) {
       onSwitchNetwork(!configNetwork.isMainnet);
       onLoadAccounts(!configNetwork.isMainnet, true);
-      window.localStorage.setItem(SWITCH_NETWORK, !configNetwork.isMainnet ? '1' : '0' );
+      window.localStorage.setItem(SWITCH_NETWORK, !configNetwork.isMainnet ? '1' : '0');
     }
   };
+
+  handleOpen() {
+    const {onOpenWalletList} = this.props;
+    onOpenWalletList(true);
+  }
+
+  handleClose() {
+    const {onOpenWalletList} = this.props;
+    onOpenWalletList(false);
+  }
 
   buildAppBar() {
     const {
       privateIncAccount,
       metaMask,
       classes,
-      onLoadAccounts,
       configNetwork,
+      walletConnect,
+      isOpenWalletList,
+      onConnectWalletConnect,
+      onConnectMetaMask,
     } = this.props;
-    if (!metaMask.isMetaMaskEnabled || metaMask.chainId !== "0x2a" && metaMask.chainId !== "0x1" || (!configNetwork.isMainnet && metaMask.chainId !== "0x2a") || (configNetwork.isMainnet && metaMask.chainId !== "0x1") || !privateIncAccount.privateKey) {
+    const ethConnect = ethConnectMess(walletConnect, metaMask, configNetwork);
+    if (ethConnect || !privateIncAccount.privateKey) {
       history.push('/wallet');
       return (
         <>
           <AppBar position="static" className={classes.appBar}>
-            {metaMask && metaMask.metaMaskRequiredMess &&
+            {ethConnect &&
             <div className={classes.metaMaskMess}>
-              <Typography style={{color: 'white', marginLeft: '10px'}}>{metaMask.metaMaskRequiredMess}</Typography>
-              { !metaMask.isMetaMaskEnabled &&
-              <Button variant="contained" color="secondary" onClick={onLoadAccounts}
-                      style={{color: 'white', marginLeft: '4px'}}>Connect Now</Button>
+              <Typography style={{color: 'white', marginLeft: '10px'}}>{ethConnect}</Typography>
+              {!metaMask.isMetaMaskEnabled && (!walletConnect.connector || !walletConnect.connector.connected) &&
+              <Button variant="contained" onClick={this.handleOpen}
+                      style={{backgroundColor: "#037dd6", color: 'white', marginLeft: '4px'}}>Connect Now</Button>
               }
             </div>
             }
@@ -127,6 +167,40 @@ export class App extends React.PureComponent {
                          to="/wallet">Wallet</NavLink>
               </Button>
             </Toolbar>
+            <div>
+              <Dialog
+                fullWidth={true}
+                maxWidth={"sm"}
+                open={isOpenWalletList}
+                onClose={this.handleClose}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+              >
+                <DialogTitle id="alert-dialog-title">{"Choose a wallet"}</DialogTitle>
+                <DialogContent className={classes.DialogDisplay}>
+                  <List>
+                    <div className={classes.metaMaskSelect}>
+                      <ListItem onClick={onConnectMetaMask} button>
+                        <img alt={"metamask"} style={{width: '24px', height: '24px'}}
+                             src={require("../../images/metamask.png")}/><ListItemText primary="MetaMask"/>
+                        { !window.ethereum &&
+                        <Button href={"https://metamask.io"} color={"secondary"} target={"_blank"}>Install</Button>
+                        }
+                      </ListItem>
+                      <Divider/>
+                    </div>
+                    <ListItem onClick={onConnectWalletConnect} button>
+                      <img alt={"walletConnect"} src={require("../../images/walletConnectIcon.svg")}/><ListItemText
+                      primary="WalletConnect"/>
+                    </ListItem>
+                  </List>
+                  <DialogActions>
+                    <Button onClick={this.handleClose} style={{marginLeft: 'auto'}}> Close </Button>
+                  </DialogActions>
+
+                </DialogContent>
+              </Dialog>
+            </div>
           </AppBar>
         </>
       );
@@ -146,7 +220,7 @@ export class App extends React.PureComponent {
           {!configNetwork.isMainnet &&
           <Button color="inherit" className={classes.navItemButton}>
             <NavLink className={classes.link} activeClassName={classes.activeLink} exact
-              to="/papps">pApps</NavLink>
+                     to="/papps">pApps</NavLink>
           </Button>
           }
           <FormGroup row className={classes.switchNetwork}>
@@ -217,6 +291,9 @@ export function mapDispatchToProps(dispatch) {
     onTogglePappsMenuList: () => dispatch(togglePappsMenuList()),
     onClosePappsMenuList: () => dispatch(closePappsMenuList()),
     onSwitchNetwork: (isMainnet) => dispatch(updateNetwork(isMainnet)),
+    onConnectWalletConnect: () => dispatch(enableWalletConnect()),
+    onConnectMetaMask: () => dispatch(enableMetaMask()),
+    onOpenWalletList: (isOpen) => dispatch(openWalletList(isOpen)),
   };
 }
 
@@ -227,8 +304,10 @@ const mapStateToProps = createStructuredSelector({
   privateIncAccount: makeSelectPrivateIncAccount(),
   isOpenedInfoDialog: makeSelectIsOpenedInfoDialog(),
   requestings: makeSelectRequestings(),
-  metaMask: makeSelecMetaMask(),
+  metaMask: makeSelectMetaMask(),
+  walletConnect: makeSelectWalletConnect(),
   configNetwork: makeSelectConfigNetwork(),
+  isOpenWalletList: makeSelectOpenWalletList(),
 });
 
 const withConnect = connect(

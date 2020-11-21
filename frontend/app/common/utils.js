@@ -1,5 +1,9 @@
 
 import {
+  ETH_INFURA_MAINNET,
+  ETH_INFURA_TESTNET,
+  INCOGNITO_FULLNODE_MAINNET,
+  INCOGNITO_FULLNODE_TESTNET,
   TOKEN_INFO,
 } from './constants';
 
@@ -36,9 +40,9 @@ function getIncognitoFullnode() {
   // return process.env.INCOGNITO_FULLNODE;
   const network = window.localStorage.getItem(SWITCH_NETWORK);
   if (network !== null && network === '1') {
-    return "https://fullnode.incognito.best";
+    return INCOGNITO_FULLNODE_MAINNET;
   }
-  return "https://testnet1.incognito.org/fullnode";
+  return INCOGNITO_FULLNODE_TESTNET;
 }
 
 function getApiUrl() {
@@ -48,9 +52,9 @@ function getApiUrl() {
 function getETHFullnodeHost() {
   const network = window.localStorage.getItem(SWITCH_NETWORK);
   if (network !== null && network === '1') {
-    return "https://mainnet.infura.io/v3/34918000975d4374a056ed78fe21c517";
+    return ETH_INFURA_MAINNET;
   }
-  return "https://kovan.infura.io/v3/34918000975d4374a056ed78fe21c517";
+  return ETH_INFURA_TESTNET;
 }
 
 function getLocalStorageKey() {
@@ -209,11 +213,15 @@ function getWalletListUndeploy() {
 function getNews() {
   return [
     {
-      description: "<i>Tips</i>: do things with common amount will gain more privacy",
+      description: "<i>Tips</i>: do things with popular amount of coin will gain more privacy",
       isLinked: false,
     },
     {
       description: '<i>News</i>: Incognito core team has released awesome <b>Privacy Quest</b> <t/> <a target="_blank" href="https://incognito.org/quest" style="color: gray; border-left: 1px solid gray; margin-left: 4px; padding-left: 4px" > Learn More </a>',
+      isLinked: true,
+    },
+    {
+      description: '<i>News</i>: <a target="_blank" href="https://ptrade.app">Ptrade</a> mainnet is live',
       isLinked: true,
     }
   ];

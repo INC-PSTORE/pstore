@@ -46,7 +46,7 @@ const styles = theme => ({
     flexWrap: 'wrap',
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: "#f44336",
+    backgroundColor: "rgb(65, 153, 252)",
     color: 'white',
   },
   navItemButton: {
@@ -92,6 +92,11 @@ const styles = theme => ({
   },
   iOSIconChecked: {
     boxShadow: theme.shadows[1],
+  },
+  '@media (max-width: 700px)': {
+    metaMaskSelect: {
+      display: 'none',
+    }
   },
 });
 
