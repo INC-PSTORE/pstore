@@ -220,7 +220,7 @@ export class App extends React.PureComponent {
           {!configNetwork.isMainnet &&
           <Button color="inherit" className={classes.navItemButton}>
             <NavLink className={classes.link} activeClassName={classes.activeLink} exact
-                     to="/papps">pApps</NavLink>
+              to="/papps">pApps</NavLink>
           </Button>
           }
           <FormGroup row className={classes.switchNetwork}>

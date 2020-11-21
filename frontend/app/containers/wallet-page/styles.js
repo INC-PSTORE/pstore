@@ -49,10 +49,9 @@ const styles = theme => ({
     textTransform: 'none',
     margin: '0px 5px 0px 5px',
   },
-
-  '@media (max-width: 600px)': {
+  '@media (max-width: 1300px)': {
     root: {
-      width: '95% !important',
+      width: '70%',
     },
   },
   '@media (max-width: 1000px)': {
@@ -63,9 +62,9 @@ const styles = theme => ({
       display: 'none',
     }
   },
-  '@media (max-width: 1300px)': {
+  '@media (max-width: 600px)': {
     root: {
-      width: '70%',
+      width: '100% !important',
     },
   },
   news: {

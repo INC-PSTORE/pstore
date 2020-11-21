@@ -12,5 +12,10 @@ export default {
     headerTitle: {
         fontSize: 18
     },
-    content: {}
+    content: {},
+    '@media (max-width: 600px)': {
+        container: {
+            width: '95% !important',
+        },
+    },
 };
