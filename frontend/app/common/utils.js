@@ -4,6 +4,8 @@ import {
   ETH_INFURA_TESTNET,
   INCOGNITO_FULLNODE_MAINNET,
   INCOGNITO_FULLNODE_TESTNET,
+  INCOGNITO_MAINNET_CONTRACT_ADDRESS,
+  INCOGNITO_TESTNET_CONTRACT_ADDRESS,
   TOKEN_INFO,
 } from './constants';
 
@@ -27,9 +29,9 @@ function isTestnet() {
 function getIncognitoContractAddr() {
   const network = window.localStorage.getItem(SWITCH_NETWORK);
   if (network !== null && network === '1') {
-    return "0x97875355ef55ae35613029df8b1c8cf8f89c9066";
+    return INCOGNITO_MAINNET_CONTRACT_ADDRESS;
   }
-  return "0xE0D5e7217c6C4bc475404b26d763fAD3F14D2b86";
+  return INCOGNITO_TESTNET_CONTRACT_ADDRESS;
 }
 
 function getIncognitoToBurnCoin() {
@@ -190,26 +192,6 @@ function getDefaultSupportedTokens(isMainnet) {
   ];
 }
 
-// Will remove this list when submit deposit proof raw tx available
-function getWalletList() {
-  return [
-    process.env.WALLET_1, // 12S2Wb5zoKjAsecY4aBTfnA3C3Z89D2JwdhctVgCNYPprFntiGXEHrEw9if7p86qKbXS4cQb2tWiSwzg3pNmk9TZn4vXnsYNRSAqo1A
-    process.env.WALLET_2, // 12S3qvLtS9Y673dLsyLmFmctraZyJxgDLTx88WRUev819dmo7BAYAi6g8N8UGU6G4b45gSvjrohkMChJshYV9DaGRN5XTuS3mNMutza
-    process.env.WALLET_3, // 12RzxGz5wQ6YivVgxQq73EVpbYYJpQNvkJ9zG4EkH7Cbm3QUDqkqhPEwzeUdMcoL2vBveBxicXfSYVDz7otW1U29CXsLK25rbkz6s2Q
-    process.env.WALLET_4, // 12S6rMj2Av9ybB7mQYiiqYk1kschxrT7Kj7Ps84Ktz1fuptju37p2ZCGqE9j4Qs3eYufW3GJCF97zBFa9NqeRCQzAb2uMFYvoHzfgai
-  ];
-}
-
-// Will remove this list when submit undeploy proof raw tx available
-function getWalletListUndeploy() {
-  return [
-    process.env.WALLET_UNDEPLOY_1, // 12S1wkJrFMXu3htu4mM4S2Axaqf1yiLtq6etxXMdeJd9WwNSNeoLk9UjBkj8MozDck6KLMGNJiHB3xR6L81wNDS4baaC5SwbE3CURoZ
-    process.env.WALLET_UNDEPLOY_2, // 12S3oHXskKkUc1TbvtxGep61h35HEhKrrs4QqYwDhiDAN8of4aVfuD4Ei7G3qyWHQPfFSsQRtWGw9y3j9FQwCCSNqX5aTDCVsCwcPok
-    process.env.WALLET_UNDEPLOY_3, // 12RpocMs9RTZ7SxBC2j5WRSja8paSnohPCLDvvWeFcQuD8eS9giq7JcG1BkVVsVNi4iHMV9krgUtgwqfQYLR2pvbdF1Mw5bpVwGmBKj
-    process.env.WALLET_UNDEPLOY_4, // 12RwypvXSocCNtzpN9tNNEnBLwwJJ32XGTkKtq4kxgvR1MjwM2E7zD1Kxgqj5bUTe9A5L5kbh4pjEZPVMjt7b3Z1CjAtvra4MtimDhZ
-  ];
-}
-
 function getNews() {
   return [
     {
@@ -286,9 +268,7 @@ export {
   filterByExtToken,
   getLocalStorageKey,
   getLocalStorageKeyUnshield,
-  getWalletList,
   getLocalStorageKeyDeploy,
   getLocalStorageKeyUndeploy,
-  getWalletListUndeploy,
   getNews,
 };

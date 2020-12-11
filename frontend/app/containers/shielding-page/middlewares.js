@@ -11,6 +11,7 @@ import {
   SHIELDING_PROOF_SUBMITTING,
   ETH_DEPOSIT_FAILED,
   DEFAULT_PRV_FEE_VALIDATE_SHIELD,
+  DEFAULT_PRV_FEE,
 } from '../../common/constants';
 import {
   filterByExtToken,
@@ -53,18 +54,20 @@ export function refreshShieldingProofStepThunk(ethAccount) {
     let shielding = getState().shielding.latestUnsuccessfulShielding;
     let ethTxInfo = getState().shielding.ethTxInfo;
     const configNetwork = getState().app.configNetwork;
+    const incAccount = getState().app.privateIncAccount;
     const rpcEndpoint = configNetwork.isMainnet ? configNetwork.mainnetFullNodeUrl : configNetwork.testnetFullNodeUrl;
     const localStorageKey = getLocalStorageKey();
+    let confirmations = 0;
     if (!shielding) {
       shielding = JSON.parse(localStorage.getItem(localStorageKey));
     }
-    if (!shielding) {
+    if (!shielding || configNetwork.isMainnet !== (shielding.network === 1)) {
       isRunning = false;
       return;
     }
 
     let ethTxid = shielding.ethtx;
-    if (!ethTxInfo) {
+    if (!ethTxInfo && ethTxid) {
       ethTxInfo = await web3.eth.getTransaction(ethTxid);
     }
     if (!ethTxInfo) {
@@ -119,8 +122,10 @@ export function refreshShieldingProofStepThunk(ethAccount) {
       case ETH_DEPOSITING_TO_INC_CONTRACT:
         if (ethTxInfo && ethTxInfo.blockNumber && ethTxInfo.status === 1) {
           const currentHeight = await web3.eth.getBlockNumber();
-          if (currentHeight - ethTxInfo.blockNumber > 15) {
+          confirmations = (currentHeight - ethTxInfo.blockNumber) > 0 ? currentHeight - ethTxInfo.blockNumber : 0;
+          if (confirmations > 15) {
             shielding.status = ETH_DEPOSITED_TO_INC_CONTRACT;
+            shielding.confirmations = confirmations;
             localStorage.setItem(localStorageKey, JSON.stringify(shielding));
             try {
               // get eth proof
@@ -140,54 +145,17 @@ export function refreshShieldingProofStepThunk(ethAccount) {
                 isRunning = false;
                 return;
               }
-              // submit proof to inc chain
-              // I'm reading incognitoJs to update this function to make it created from local, please bear with me this time
-              // TODO create tx local and store before broadcast
-              let isDelivered = false;
-              const wallets = getWalletList();
-              let numOfWalllet = wallets.length;
-              let submitProofResponse;
-              while (!isDelivered && (numOfWalllet - 1) !== 0) {
-                numOfWalllet--;
-                let deliverGuy = wallets[numOfWalllet];
-                let options2 = await buildOptions('POST', {
-                  "jsonrpc": "1.0",
-                  "method": "createandsendtxwithissuingethreq",
-                  "params": [
-                    deliverGuy,
-                    null,
-                    -1,
-                    0,
-                    {
-                      "IncTokenID": shielding.inctokenid,
-                      "BlockHash": prepareProofResp.blockHash,
-                      "ProofStrs": prepareProofResp.encNodeList,
-                      "TxIndex": prepareProofResp.txIndex,
-                    }
-                  ],
-                  "id": 1
-                });
-                submitProofResponse = await makeCall(
-                  dispatch,
-                  rpcEndpoint,
-                  options2,
-                );
-                if (submitProofResponse.Error != null) {
-                  if (submitProofResponse.Error.StackTrace.includes("not enough coin for native fee") || submitProofResponse.Error.StackTrace.includes("Reject Double Spend With Current")) {
-                    continue;
-                  }
-                  throw new Error("submitted proof to incognito chain failed");
-                }
-                isDelivered = true;
+              const privateIncAccount = getAccountByPrivateKey(incAccount.privateKey);
+              const prvBalance = await getBalanceByToken(privateIncAccount.nativeToken);
+              // check prv balance
+              if (prvBalance < DEFAULT_PRV_FEE) {
+                throw new Error("not enough PRV to pay fee");
               }
-              if (isDelivered) {
-                shielding.status = SHIELDING_PROOF_SUBMITTING;
-                shielding.inctx = submitProofResponse.Result.TxID;
-              }
+              const txHistory = await privateIncAccount.nativeToken.createShieldingToken(shielding.inctokenid, prepareProofResp.blockHash, prepareProofResp.txId, prepareProofResp.encNodeList, DEFAULT_PRV_FEE);
+              shielding.status = SHIELDING_PROOF_SUBMITTING;
+              shielding.inctx = txHistory.txId;
             } catch (e) {
-              if (e.toString() === "Error: submitted proof to incognito chain failed") {
-                shielding.status = SHIELDING_PROOF_SUBMIT_REJECTED;
-              }
+              shielding.status = SHIELDING_PROOF_SUBMIT_REJECTED;
               dispatch(updateValidateForm({snackBar: {isError: true, message: e.toString()}}));
             }
           }
@@ -199,6 +167,7 @@ export function refreshShieldingProofStepThunk(ethAccount) {
       inctx: shielding.inctx,
       inctokenid: shielding.inctokenid,
       network: shielding.network,
+      confirmations: confirmations,
     };
     dispatch(refreshShieldingProofStepSuccess(newShielding, ethTxInfo));
     localStorage.setItem(localStorageKey, JSON.stringify(shielding));
@@ -218,7 +187,7 @@ export function getLatestUnsuccessfulShieldingThunk(ethAccount) {
       if (shielding && configNetwork.isMainnet === (shielding.network === 1)) {
         dispatch(getLatestUnsuccessfulShieldingSuccess(shielding));
       } else {
-        dispatch(getLatestUnsuccessfulShieldingSuccess(null));
+        dispatch(refreshShieldingProofStepSuccess(null, null));
       }
     } catch (e) {
       console.log('error occured while calling getLatestUnsuccessfulShielding api: ', e);
@@ -272,6 +241,7 @@ async function depositERC20(
   txCount,
   incTokenId,
   isMainnet,
+  connector,
 ) {
   const erc20TokenContract = new web3.eth.Contract(getERC20ContractABI(), formInfo.extTokenId)
   let afterCommas = 6;
@@ -314,10 +284,14 @@ async function depositERC20(
       to: formInfo.extTokenId,
       data: apprData,
     };
-    await ethereum.request({
-      method: 'eth_sendTransaction',
-      params: [apprTxObject],
-    });
+    if (connector) {
+      await connector.sendTransaction(apprTxObject);
+    } else {
+      await ethereum.request({
+        method: 'eth_sendTransaction',
+        params: [apprTxObject],
+      });
+    }
     approvedBalance = await erc20TokenContract.methods.allowance(ethAccount.address, getIncognitoContractAddr()).call();
     while (approvedBalance < web3.utils.hexToNumberString(calculatedApproveValue)) {
       await sleep(10000);
@@ -333,11 +307,15 @@ async function depositERC20(
     to: incContractAddr,
     data: depData,
   };
-
-  const txId = await ethereum.request({
-    method: 'eth_sendTransaction',
-    params: [depTxObject],
-  });
+  let txId;
+  if (connector) {
+    txId = await connector.sendTransaction(depTxObject);
+  } else {
+    txId = await ethereum.request({
+      method: 'eth_sendTransaction',
+      params: [depTxObject],
+    });
+  }
 
   const shieldingObject = {ethtx: txId, status: ETH_DEPOSITING_TO_INC_CONTRACT, inctokenid: incTokenId, network: isMainnet ? 1 : 0};
   localStorage.setItem(getLocalStorageKey(), JSON.stringify(shieldingObject));
@@ -355,6 +333,7 @@ async function depositEther(
   txCount,
   incTokenId,
   isMainnet,
+  connector,
 ) {
   const ethAmt = parseInt(web3.utils.toWei(formInfo.amount, 'ether'));
   const data = incContract.methods.deposit(privIncAccount.address).encodeABI();
@@ -366,10 +345,15 @@ async function depositEther(
     data,
   };
 
-  const txId = await window.ethereum.request({
-    method: 'eth_sendTransaction',
-    params: [depTxObject],
-  });
+  let txId;
+  if (connector) {
+    txId = await connector.sendTransaction(depTxObject);
+  } else {
+    txId = await window.ethereum.request({
+      method: 'eth_sendTransaction',
+      params: [depTxObject],
+    });
+  }
 
   const shieldingObjbect = {ethtx: txId, status: ETH_DEPOSITING_TO_INC_CONTRACT, inctokenid: incTokenId, network: isMainnet ? 1 : 0};
   localStorage.setItem(getLocalStorageKey(), JSON.stringify(shieldingObjbect));
@@ -381,7 +365,20 @@ export function depositThunk(ethAccount, tempIncAccount, privIncAccount, formInf
     dispatch(countUpRequests());
     const incContractAddr = getIncognitoContractAddr();
     const web3 = new Web3(getETHFullnodeHost());
-    const accounts = await window.ethereum.request({method: 'eth_requestAccounts'});
+    let accounts;
+    const appState = getState().app;
+    let connector;
+    if (appState.metaMask.isMetaMaskEnabled) {
+      accounts = appState.metaMask.metaMaskAccounts;
+    } else if (appState.walletConnect.connector && appState.walletConnect.connector.connected) {
+      accounts = appState.walletConnect.connectorAccounts;
+      connector = appState.walletConnect.connector;
+    }
+    if (!accounts || accounts.length < 1) {
+      dispatch(countDownRequests());
+      dispatch(updateValidateForm({snackBar: {isError: true, message: "No account connected"}}));
+      return;
+    }
     ethAccount = {address: accounts[0]};
     const incContract = new web3.eth.Contract(getIncContractABI(), incContractAddr);
     const txCount = await web3.eth.getTransactionCount(ethAccount.address);
@@ -414,6 +411,7 @@ export function depositThunk(ethAccount, tempIncAccount, privIncAccount, formInf
           txCount,
           tokenInst.incTokenId,
           configNetwork.isMainnet,
+          connector,
         );
       } catch (e) {
         console.log(`An error occured while depositing ${formInfo.extTokenId} token to Inc contract`, e);
@@ -433,6 +431,7 @@ export function depositThunk(ethAccount, tempIncAccount, privIncAccount, formInf
           txCount,
           tokenInst.incTokenId,
           configNetwork.isMainnet,
+          connector,
         );
       } catch (e) {
         console.log(`An error occured while depositing Ether to Inc contract`, e);
@@ -471,7 +470,7 @@ export function updateShieldingSkipStepThunk(skipForm) {
       }
       const configNetwork = getState().app.configNetwork;
       const callSCFunc = transaction.input.slice(0, 10);
-      if (callSCFunc !== '0xa26e1186' && callSCFunc !== '0x5a67cb87' && transaction.to.toLowerCase() !== getIncognitoContractAddr().toLowerCase()) {
+      if ((callSCFunc !== '0xa26e1186' && callSCFunc !== '0x5a67cb87') || transaction.to.toLowerCase() !== getIncognitoContractAddr().toLowerCase()) {
         throw new Error("Invalid transaction hash");
       }
       let extTokenId;

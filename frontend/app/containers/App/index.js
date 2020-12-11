@@ -67,7 +67,7 @@ function ethConnectMess(walletConnect, metaMask, configNetwork) {
   if (metaMask.isMetaMaskEnabled || walletConnect.connector && walletConnect.connector.connected) {
     const tmp = metaMask.isMetaMaskEnabled ? metaMask : walletConnect;
     if (tmp.chainId !== ETH_MAINNET_ID && tmp.chainId !== ETH_KOVAN_ID || (!configNetwork.isMainnet && tmp.chainId !== ETH_KOVAN_ID) || (configNetwork.isMainnet && tmp.chainId !== ETH_MAINNET_ID)) {
-      return tmp.requiredMess ? tmp.requiredMess : "switch eth network to " + (tmp.chainId !== ETH_KOVAN_ID ? "kovan" : "mainnet") + " please";
+      return tmp.requiredMess ? tmp.requiredMess : "switch eth network to " + (configNetwork.isMainnet ? "mainnet" : "kovan") + " please";
     }
     return null;
   } else {
@@ -143,7 +143,9 @@ export class App extends React.PureComponent {
     } = this.props;
     const ethConnect = ethConnectMess(walletConnect, metaMask, configNetwork);
     if (ethConnect || !privateIncAccount.privateKey) {
-      history.push('/wallet');
+      if (!privateIncAccount.privateKey) {
+        history.push('/wallet');
+      }
       return (
         <>
           <AppBar position="static" className={classes.appBar}>

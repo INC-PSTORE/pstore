@@ -29,7 +29,7 @@ export default class NotFound extends React.PureComponent {
       <div style={{ textAlign: 'center', width: '80%' }}>
         <List >
           {/* <ListItem alignItems="flex-start"> */}
-          <ListItemLink href={PSAFE_DOMAIN}>
+          <ListItemLink target="_blank" href={PSAFE_DOMAIN}>
             <ListItemAvatar>
               <Avatar alt="MultiSig" src="https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcT7FQR4cwPPG_j0ZZUfSmLCBkGyoHH7swFvUw&usqp=CAU" />
             </ListItemAvatar>
@@ -43,7 +43,7 @@ export default class NotFound extends React.PureComponent {
             />
           </ListItemLink>
 
-          <ListItemLink href={PTRADE_DOMAIN}>
+          <ListItemLink target="_blank" href={PTRADE_DOMAIN}>
             <ListItemAvatar>
               <Avatar alt="pTrade" src="https://cdn.publish0x.com/prod/fs/images/621a7ff87ce20787ca278d6ca6ae21780ac6b2aa79510cb201cf573e9d1a6604.jpeg" />
             </ListItemAvatar>

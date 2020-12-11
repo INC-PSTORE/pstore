@@ -7,8 +7,8 @@ export const PRIMARY_COLOR = '#fb958b';
 export const INITIAL_PAGING_SKIP = 0;
 export const PAGING_LIMIT = 15;
 
-export const INCOGNITO_TESTNET_CONTRACT_ADDRESS = '0xE0D5e7217c6C4bc475404b26d763fAD3F14D2b86';
-export const INCOGNITO_MAINNET_CONTRACT_ADDRESS = '0xE0D5e7217c6C4bc475404b26d763fAD3F14D2b86';
+export const INCOGNITO_TESTNET_CONTRACT_ADDRESS = '0x7c7e371D1e25771f2242833C1A354dCE846f3ec8';
+export const INCOGNITO_MAINNET_CONTRACT_ADDRESS = '0x97875355eF55Ae35613029df8B1C8Cf8f89c9066';
 
 export const INCOGNITO_TESTNET_FULLNODE = 'https://testnet.incognito.org/fullnode';
 export const INCOGNITO_MAINNET_FULLNODE = 'https://mainnet.incognito.org/fullnode';
@@ -75,7 +75,7 @@ export const INC_WALLET_PASSPHRASE = '123';
 
 export const ETH_MAINNET_ID = "0x1";
 export const ETH_KOVAN_ID = "0x2a";
-export const INCOGNITO_FULLNODE_TESTNET = "https://testnet1.incognito.org/fullnode";
+export const INCOGNITO_FULLNODE_TESTNET = "https://testnet.incognito.org/fullnode";
 export const INCOGNITO_FULLNODE_MAINNET = "https://fullnode.incognito.best";
 export const ETH_INFURA_TESTNET = "https://kovan.infura.io/v3/34918000975d4374a056ed78fe21c517";
 export const ETH_INFURA_MAINNET = "https://mainnet.infura.io/v3/34918000975d4374a056ed78fe21c517";
@@ -83,7 +83,7 @@ export const INCOGNITO_API_TESTNET = "https://test-api2.incognito.org";
 export const INCOGNITO_API_MAINNET = "https://api.incognito.org";
 
 export const DEFAULT_PRV_FEE = 100;   // in nano PRV
-export const DEFAULT_PRV_FEE_VALIDATE_SHIELD = 10000;
+export const DEFAULT_PRV_FEE_VALIDATE_SHIELD = 100;
 
 export const TOKEN_INFO = {
     PRV: {
